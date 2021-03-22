@@ -3,7 +3,6 @@
 	<view class="t1">
 		<view class="topic">
 			<slot>
-
 			</slot>
 		</view>
 	</view>
