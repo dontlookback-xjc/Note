@@ -17,8 +17,6 @@
 </script>
 
 <style lang="scss">
-
-
 	//item
 	.t1 {
 		background-color: rgba($color: $skyBlue, $alpha: 0.5);
