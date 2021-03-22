@@ -36,15 +36,14 @@
 		},
 		methods: {
 			showSwitch(add = true) {
-				if(interval) {console.log(interval); return;} 
+				if(interval) {return;} 
 				this.hiding==add?this.showIndex = 0:'';
 				add ? this.hiding = 0 : this.hiding = 1
-				
 				let duration = Math.ceil((2 / this.externalData.length) * 100)
 				interval = setInterval(() => {
 					this.showIndex += 1;
 					let flag = 1;
-					flag = this.showIndex % 3
+					flag = this.showIndex % 3;
 					if (!flag) {
 						clearInterval(interval)
 						interval=0;
