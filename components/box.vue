@@ -40,7 +40,7 @@
 			border-radius: 20rpx;
 			margin: 0rpx auto;
 			font-family: PingFang SCi;
-			font-size: 16px;
+
 			color: rgba($color: #0575ff, $alpha: 1.0);
 		}
 	}
