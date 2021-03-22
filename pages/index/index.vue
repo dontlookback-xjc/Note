@@ -19,7 +19,6 @@
 		methods: {
 			showMessage(value){
 				return ()=>{
-					
 					this.list=this.secondTopics[value]
 				}
 			}
@@ -57,6 +56,4 @@
 </script>
 
 <style lang="scss">
-
-
 </style>
