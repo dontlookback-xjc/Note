@@ -3,9 +3,8 @@
 	<view class="topics">
 		<component :is="componentName" :class="{'show':(index<showIndex)-hiding,'transition':true}"
 			v-for="(value,index) in externalData " :key="index">
-			<view @click="showSwitch(false)">
+			<view @click="showSwitch(false,handleClick(value));">
 				{{value}}
-				
 			</view>
 		</component>
 	</view>
@@ -31,12 +30,14 @@
 				type: Array,
 
 			},
-			handleCLick: {
-				type: Function
+			handleClick: {
+				type: Function,
+				default:()=>{}
 			}
 		},
 		methods: {
-			showSwitch(add = true) {
+			showSwitch(add = true,cb) {
+			
 				if(interval) {return;} 
 				this.hiding==add?this.showIndex = 0:'';
 				add ? this.hiding = 0 : this.hiding = 1
@@ -48,8 +49,13 @@
 					if (!flag) {
 						clearInterval(interval)
 						interval=0;
+						//此处时间需要解耦
+						if(cb){setTimeout(()=>{cb();this.showSwitch()},400)}
+						
+						
 					}
 				}, duration)
+				
 			},
 			showSecondTopic: function() {}
 		},

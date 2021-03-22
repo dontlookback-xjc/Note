@@ -2,8 +2,7 @@
 	<view>
 		<uni-nav-bar left-icon="back" right-text="菜单" title="Note" backgroundColor="#55dbff" fixed="true" shadow="true"
 			color="white"></uni-nav-bar>
-
-		<transition :externalData="topics" ></transition>
+		<transition :externalData="list" :handleClick="showMessage" ></transition> </transition>
 	</view>
 </template>
 
@@ -13,11 +12,17 @@
 	export default {
 		data() {
 			return {
-				plans:data
+				plans:data,
+				list:[],
 			}
 		},
 		methods: {
-			
+			showMessage(value){
+				return ()=>{
+					console.log(this.list)
+					this.list=this.secondTopics[value]
+				}
+			}
 		},
 		components: {
 			transition
@@ -44,6 +49,9 @@
 				return result
 			}
 		},
+	mounted(){
+		this.list=this.topics
+	}
 
 	}
 </script>
