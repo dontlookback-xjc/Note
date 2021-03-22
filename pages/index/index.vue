@@ -19,7 +19,7 @@
 		methods: {
 			showMessage(value){
 				return ()=>{
-					console.log(this.list)
+					
 					this.list=this.secondTopics[value]
 				}
 			}
