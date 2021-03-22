@@ -3,8 +3,6 @@
 		
 	<transition></transition>
 	</view>
-		
-		
 
 </template>
 
