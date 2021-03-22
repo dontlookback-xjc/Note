@@ -1,71 +1,89 @@
 <template>
 
-	<view class="topics">
-		<component :is="componentName" :class="{'show':(index<showIndex)-hiding,'transition':true}"
-			v-for="(value,index) in externalData " :key="index">
-			<view @click="showSwitch(false,handleClick(value));">
-				{{value}}
-			</view>
-		</component>
-	</view>
+		<view class="topics">
+			<component  :is="componentName" :class="{'show':(index<showIndex)-hiding,'transition':true}"
+				v-for="(topic,index) in topics " :key="index">
+				<view @click="showSwitch(false)">
+						{{topic}}
+				</view>
+			</component>
+		</view>
 </template>
 
 <script>
-	var interval=0
 	import box from '@/components/box.vue'
 	export default {
 		data() {
 			return {
 				title: 'Hello',
+				plans: [{
+						name: '跑步',
+						type: {
+							name: "运动",
+						}
+					},
+					{
+						name: '前端',
+						type: {
+							name: "学习",
+						}
+					},
+					{
+						name: '做菜',
+						type: {
+							name: "生活",
+						}
+					}
+
+				],
 				showIndex: 0,
-				hiding: 1,
+				hiding: 0,
+				
 			}
 		},
-		props: {
-			componentName: {
-				type: String,
-				default: 'box'
-			},
-			externalData: {
-				type: Array,
-
-			},
-			handleClick: {
-				type: Function,
-				default:()=>{}
+		props:{
+			componentName:{
+				type:String,
+				default:'box'
 			}
 		},
 		methods: {
-			showSwitch(add = true,cb) {
-			
-				if(interval) {return;} 
-				this.hiding==add?this.showIndex = 0:'';
+			showSwitch: function(add = true) {
 				add ? this.hiding = 0 : this.hiding = 1
-				let duration = Math.ceil((2 / this.externalData.length) * 100)
-				interval = setInterval(() => {
+				this.showIndex = 0;
+				let duration = Math.ceil((2 / this.topics.length) * 100)
+				let interval = setInterval(() => {
 					this.showIndex += 1;
 					let flag = 1;
-					flag = this.showIndex % 3;
+					flag = (this.showIndex - this.topics.length) % 3
 					if (!flag) {
 						clearInterval(interval)
-						interval=0;
-						//此处时间需要解耦
-						if(cb){setTimeout(()=>{cb();this.showSwitch()},400)}
-						
-						
 					}
 				}, duration)
-				
-			},
-			showSecondTopic: function() {}
+			}
 		},
-
 		components: {
 			box
 		},
-
+		computed: {
+			//计算主题列表
+			topics() {
+				let set = {};
+				this.plans.forEach((item) => {
+					set[item.type.name] = 1;
+				})
+				let result = []
+				for (let item in set) {
+					result.push(item)
+				}
+				return result
+			}
+		},
 		mounted() {
-			this.showSwitch();
+
+			this.showSwitch()
+
+
 		},
 	}
 </script>
@@ -87,7 +105,7 @@
 			opacity: 1 !important;
 			left: 0rpx !important;
 		}
-
+	
 	}
 
 	@keyframes show {
