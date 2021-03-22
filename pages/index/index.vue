@@ -19,7 +19,6 @@
 		methods: {
 			showMessage(value){
 				return ()=>{
-					
 					this.list=this.secondTopics[value]
 				}
 			}
