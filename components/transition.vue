@@ -5,6 +5,7 @@
 			v-for="(value,index) in externalData " :key="index">
 			<view @click="showSwitch(false)">
 				{{value}}
+				
 			</view>
 		</component>
 	</view>
