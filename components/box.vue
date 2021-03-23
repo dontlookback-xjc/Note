@@ -26,11 +26,7 @@
 		margin: 10rpx 0;
 
 		// animation: show 1s   forwards  ;
-		position: relative;
-		align-items: center;
-		opacity: 0;
-		left: -80rpx;
-
+	
 		.topic {
 			background-color: rgba($color: $skyBlue, $alpha: 1);
 			height: 80rpx;
