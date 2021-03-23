@@ -7,6 +7,7 @@
 </template>
 
 <script>
+	
 	import transition from "@/components/transition.vue"
 	import data from "./data.js"
 	export default {
