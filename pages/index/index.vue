@@ -2,7 +2,7 @@
 	<view>
 		<uni-nav-bar left-icon="back" right-text="菜单" title="Note" backgroundColor="#55dbff" fixed="true" shadow="true"
 			color="white"></uni-nav-bar>
-		<transition :externalData="list" :handleClick="showMessage" ></transition> </transition>
+		<transition :externalData="topics" :handleClick="showMessage" ></transition> </transition>
 	</view>
 </template>
 
@@ -13,7 +13,7 @@
 		data() {
 			return {
 				plans:data,
-				list:[],
+				
 			}
 		},
 		methods: {
@@ -48,9 +48,9 @@
 				return result
 			}
 		},
-	mounted(){
-		this.list=this.topics
-	}
+	
+	
+	
 
 	}
 </script>

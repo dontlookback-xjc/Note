@@ -11,14 +11,14 @@
 </template>
 
 <script>
-	var interval=0
+	var interval = 0
 	import box from '@/components/box.vue'
 	export default {
 		data() {
 			return {
 				title: 'Hello',
 				showIndex: 0,
-				hiding: 1,
+				hiding: 0,
 			}
 		},
 		props: {
@@ -32,30 +32,39 @@
 			},
 			handleClick: {
 				type: Function,
-				default:()=>{}
+				default: () => {}
 			}
 		},
 		methods: {
-			showSwitch(add = true,cb) {
-			
-				if(interval) {return;} 
-				this.hiding==add?this.showIndex = 0:'';
-				add ? this.hiding = 0 : this.hiding = 1
-				let duration = Math.ceil((2 / this.externalData.length) * 100)
-				interval = setInterval(() => {
-					this.showIndex += 1;
-					let flag = 1;
-					flag = this.showIndex % 3;
-					if (!flag) {
-						clearInterval(interval)
-						interval=0;
-						//此处时间需要解耦
-						if(cb){setTimeout(()=>{cb();this.showSwitch()},400)}
-						
-						
-					}
-				}, duration)
-				
+			showSwitch(add = true, cb) {
+				var duration
+				if (interval) {
+					return;
+				}
+				this.hiding == add ? this.showIndex = 0 : '';
+				add ? this.hiding = 0 : this.hiding = 1;
+				//根据数量返回合适时间间隔
+					if (this.externalData.length) {
+					duration = Math.ceil(2 / this.externalData.length) * 150
+					
+					interval = setInterval(() => {
+						this.showIndex += 1;
+						let flag = this.showIndex % 3;
+						//结束判断
+						if (!flag) {
+							clearInterval(interval)
+							interval = 0;
+							//此处时间需要解耦
+							if (cb) {
+								setTimeout(() => {
+									cb();
+									this.showSwitch()
+								}, 300)
+							}
+						}
+					}, duration)
+				}
+
 			},
 			showSecondTopic: function() {}
 		},
@@ -63,10 +72,18 @@
 		components: {
 			box
 		},
+		mounted(){
+				this.showSwitch();
+		}
+		// beforeUpdate() {
 
-		mounted() {
-			this.showSwitch();
-		},
+
+		// },
+		// Updated() {
+		// 	console.log('Updated')
+
+		// 
+		// },
 	}
 </script>
 
@@ -81,24 +98,16 @@
 
 		.transition {
 			transition: 0.7s;
+			position: relative;
+			align-items: center;
+			opacity: 0;
+			left: -80rpx;
+
 		}
 
 		.show {
 			opacity: 1 !important;
 			left: 0rpx !important;
-		}
-
-	}
-
-	@keyframes show {
-		0% {
-			opacity: 0;
-			left: -40rpx;
-		}
-
-		100% {
-			opacity: 1;
-			left: 0rpx;
 		}
 
 	}
