@@ -24,6 +24,7 @@
 		border-radius: 30rpx;
 		display: flex;
 		margin: 10rpx 0;
+		align-items: center;
 
 		// animation: show 1s   forwards  ;
 	

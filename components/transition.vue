@@ -1,9 +1,22 @@
 <template>
 
-	<view class="topics">
-		<component :is="componentName" :class="{'show':(index<showIndex)-hiding,'transition':true}"
+	<view class="topics" :style="{left:ListLeft}">
+	
+<transition name="fade">
+	
+	<component :is="componentName" 	 style="position: relative;" v-show="backShow">
+			<!-- 获得父列表 -->
+			<view @click="delayClick(backHandle)">
+				···
+			</view>
+		</component>
+	</transition>
+	 
+		<component :is="componentName"  
+		:class="{'show':(index<showIndex)-hiding,'transition':true}"
 			v-for="(value,index) in externalData " :key="index">
-			<view @click="showSwitch(false,handleClick(value));">
+		<!-- /获得子列表 -->
+			<view @click="delayClick(handleClick,value);">
 				{{value}}
 			</view>
 		</component>
@@ -19,6 +32,8 @@
 				title: 'Hello',
 				showIndex: 0,
 				hiding: 0,
+				ListLeft:'-260rpx',
+				backShow:false
 			}
 		},
 		props: {
@@ -33,10 +48,30 @@
 			handleClick: {
 				type: Function,
 				default: () => {}
+			},
+			backHandle:{
+				type: Function,
+				default: () => {}
+			},
+
+		},
+		computed:{
+			//与css过渡时间统一。
+			delayTime(){
+				var dom=document.getElementsByClassName('transition')
+				var duration=getComputedStyle(dom[0], null)['transition-duration']
+				duration=duration.slice(0,-1)*1000
+				return duration
 			}
 		},
+		 watch: {
+		    externalData(){
+				console.log(this.externalData)
+				   this.showSwitch();
+		    }
+		  },
 		methods: {
-			showSwitch(add = true, cb) {
+			showSwitch(add = true) {
 				var duration
 				if (interval) {
 					return;
@@ -49,45 +84,46 @@
 					
 					interval = setInterval(() => {
 						this.showIndex += 1;
-						let flag = this.showIndex % 3;
+						let flag = this.showIndex % this.externalData.length;
 						//结束判断
 						if (!flag) {
 							clearInterval(interval)
 							interval = 0;
-							//此处时间需要解耦
-							if (cb) {
-								setTimeout(() => {
-									cb();
-									this.showSwitch()
-								}, 300)
-							}
+						
 						}
 					}, duration)
 				}
 
 			},
-			showSecondTopic: function() {}
+			delayClick(cb){
+				this.showSwitch(false);
+				var params=Array.prototype.slice.call(arguments,1)
+				setTimeout(()=>{
+					this.backShow=cb===this.handleClick?1:0
+					cb(...params)
+					
+					},this.delayTime)
+			}
 		},
 
 		components: {
 			box
 		},
 		mounted(){
-				this.showSwitch();
+			
+			//点击菜单
+			this.bus.$on('showTopics',()=>{
+				this.ListLeft='0';
+				setTimeout(this.showSwitch,50)
+			})
+			
+				
 		}
-		// beforeUpdate() {
-
-
-		// },
-		// Updated() {
-		// 	console.log('Updated')
-
-		// 
-		// },
 	}
 </script>
 
 <style lang="scss">
+	// 1
 	.topics {
 		position: absolute;
 		background-color: rgba($color:$cyan, $alpha: 0.7);
@@ -95,11 +131,24 @@
 		padding: 10rpx 20rpx;
 		box-sizing: border-box;
 		width: 260rpx;
-
+		transition: 0.7s;
+			
+		.fade-enter-active,.fade-leave-active{
+			transition:  .7s;
+		}
+		
+		.fade-enter, .fade-leave-to {
+		  opacity: 0;
+		  left:-80rpx
+		}
+		.fade-enter-to, .fade-leave {	  
+		  left:0rpx
+		}
+		
 		.transition {
 			transition: 0.7s;
 			position: relative;
-			align-items: center;
+		
 			opacity: 0;
 			left: -80rpx;
 

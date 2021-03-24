@@ -1,31 +1,35 @@
 <template>
 	<view>
-		<uni-nav-bar left-icon="back" right-text="菜单" title="Note" backgroundColor="#55dbff" fixed="true" shadow="true"
-			color="white"></uni-nav-bar>
-		<transition :externalData="topics" :handleClick="showMessage" ></transition> </transition>
+		<uni-nav-bar left-icon="list" @clickLeft="bus.$emit('showTopics')" right-text="菜单" title="Note"
+			backgroundColor="#55dbff" fixed="true" shadow="true" color="white"></uni-nav-bar>
+
+		<transitionList ref="list" :externalData="list.length?list:topics" :handleClick="showMessage"
+			:backHandle="backTopics"></transitionList>
 	</view>
 </template>
 
 <script>
-	
-	import transition from "@/components/transition.vue"
+	import transitionList from "@/components/transition.vue"
 	import data from "./data.js"
 	export default {
 		data() {
 			return {
-				plans:data,
-				
+				plans: data,
+				list: [],
+
+
 			}
 		},
 		methods: {
-			showMessage(value){
-				return ()=>{
-					this.list=this.secondTopics[value]
-				}
+			showMessage(value) {
+				this.list = this.secondTopics[value]
+			},
+			backTopics() {
+				this.list = this.topics;
 			}
 		},
 		components: {
-			transition
+			transitionList
 		},
 		computed: {
 			//{key(string type):value（array plans}}
@@ -40,18 +44,21 @@
 				})
 				return set
 			},
-			topics(){
-				let result=[]
-				for (let key in this.secondTopics){
+			topics() {
+				let result = []
+				for (let key in this.secondTopics) {
 					result.push(key)
 				}
-				console.log('topics',result)
+
+
 				return result
 			}
 		},
-	
-	
-	
+		//加上这行会产生正常数据
+		// mounted(){
+		// 	console.log(this.topics,this.list)
+		// }
+
 
 	}
 </script>
