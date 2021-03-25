@@ -1,17 +1,25 @@
 <script>
 	export default {
-		onLaunch: function() {
-			console.log('App Launch')
-		},
-		onShow: function() {
-			console.log('App Show')
-		},
-		onHide: function() {
-			console.log('App Hide')
+	onLaunch(){
+		try {
+			var plan= uni.getStorageSync('plan');
+			console.log('app',plan);
+			plan?this.bus.plan=plan:'';
+			
+		} catch (e) {
+			uni.showToast({
+				title: 'error',
+				duration: 2000
+			});
 		}
+	}
+	
 	}
 </script>
 
 <style>
+
+	body{overflow-y: hidden;} 
+
 
 </style>

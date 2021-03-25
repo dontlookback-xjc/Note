@@ -18,7 +18,8 @@
 <style lang="scss">
 	//item
 	.t1 {
-		background-color: rgba($color: $skyBlue, $alpha: 0.5);
+		background-color: rgba($assistance, $alpha: 0.4);
+	
 		height: 100rpx;
 		width: 220rpx;
 		border-radius: 30rpx;
@@ -29,7 +30,7 @@
 		// animation: show 1s   forwards  ;
 	
 		.topic {
-			background-color: rgba($color: $skyBlue, $alpha: 1);
+			background-color: $assistance;
 			height: 80rpx;
 			width: 90%;
 			line-height: 80rpx;
@@ -38,7 +39,7 @@
 			margin: 0rpx auto;
 			font-family: PingFang SCi;
 			font-size: 16px;
-			color: rgba($color: #0575ff, $alpha: 1.0);
+			color: rgba($text, $alpha: 1.0);
 		}
 	}
 </style>

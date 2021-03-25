@@ -1,7 +1,13 @@
+
+import d from "@/js/Date.js"
+
+var time=d.Format('YYYY-MM-DD')
+
 var plans=[{
 						name: '跑步',
 						type: {
 							name: "运动",
+							
 						}
 					},
 					{
@@ -24,4 +30,7 @@ var plans=[{
 					}
 
 				]
+				plans.forEach((item)=>{
+					item.timeAdd=time
+				})
 export default plans

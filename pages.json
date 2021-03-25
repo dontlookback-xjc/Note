@@ -7,6 +7,19 @@
 			}
 		}
 	
+        ,{
+            "path" : "pages/plan/index",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        },{
+            "path" : "pages/test/index"
+        
+            
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "white",
