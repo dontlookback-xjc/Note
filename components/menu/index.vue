@@ -1,6 +1,6 @@
 <template>
-	<view style="overflow-y:hidden; position: absolute; ">
-		<uni-nav-bar left-icon="list" @clickLeft="bus.$emit('showTopics')" right-text="菜单" :title="title"
+	<view style="overflow-y:hidden; ">
+		<uni-nav-bar left-icon="list" @clickLeft="bus.$emit('showTopics')" right-text="" :title="title"
 			backgroundColor="rgba( 173,215,237)" fixed="true" shadow="true" color="white"></uni-nav-bar>
 		<transitionList   style="z-index: 20;"></transitionList>
 	</view>

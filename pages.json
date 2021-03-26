@@ -16,7 +16,12 @@
             }
             
         },{
-            "path" : "pages/test/index"
+            "path" : "pages/newSchedule/index",
+			"style" :
+			{
+			   
+			    "enablePullDownRefresh": false
+			}
         
             
         }

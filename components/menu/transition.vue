@@ -1,8 +1,6 @@
 <template>
 
-	<view style="height:700px ;width: 750rpx;">
-		
-
+	<view>
 		<view class="topics" :style="{left:showTopics?'0':ListLeft}">
 
 			<!-- #ifdef MP-WEIXIN -->
@@ -236,7 +234,7 @@
 
 	// 1
 	.topics {
-		position: relative;
+		position: absolute;
 		z-index: 20;
 		background-color: rgba($color:$bg, $alpha: 1);
 		height: 1000px;

@@ -1,12 +1,12 @@
 <template>
-	<view style="width: 90%;margin: 0 auto;padding-top:200rpx ;">
+	<view style="width: 90%;margin: 0 auto;padding-top:100rpx ;">
 		<form>
 			<label v-for="(item,index) in form" :key="index"> {{item.input}}
 				<input type="text" v-model="item.text" class="text" :class="{'error':item.flag}"
 					:placeholder="item.message" />
 			</label>
 
-			<!-- 根据ajax加个动画 -->
+			
 			<view style="display: flex;align-items: center;height: 300rpx;">
 
 
@@ -94,10 +94,7 @@
 					
 					});
 					this.bus.plan= uni.getStorageSync('plan');
-				
 				}
-
-
 			},
 			remove(){
 				
@@ -118,8 +115,6 @@
 				console.log(this.bus.plan)
 			})
 		
-					
-
 		}
 	}
 </script>
