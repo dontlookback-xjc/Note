@@ -38,7 +38,8 @@
 							success:(res)=>{
 								console.log(JSON.stringify(res))
 								this.viewHeight=res.windowHeight-44+'px'
-								console.log(this.viewHeight)
+								
+							
 							}
 						});
 		}

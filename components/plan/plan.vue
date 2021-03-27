@@ -6,24 +6,19 @@
 					:placeholder="item.message" />
 			</label>
 
+			<bubbleButton :handleClick="checkForm" 
+			:isExpand="isExpand"></bubbleButton>
 			
-			<view style="display: flex;align-items: center;height: 300rpx;">
-
-
-				<view class="bubbles" @click="checkForm" :class="{'expand':isExpand}">
-
-				</view>
-				<button @click="checkForm" class="submit">{{isExpand?'Loading':'Submit'}}</button>
-				<button @click="remove">remove</button>
-				{{bus.plan?bus.plan.length:0}}
+		
 				
-			</view>
+
 
 		</form>
 	</view>
 </template>
 <script>
 	import formClass from "./form.js"
+	import bubbleButton from "../bubbleButton.vue"
 	export default {
 		data() {
 			return {
@@ -51,6 +46,9 @@
 
 
 			}
+		},
+		components:{
+			bubbleButton
 		},
 		computed: {
 			formData() {
@@ -129,7 +127,7 @@
 	.text {
 
 		color: #878787;
-		border-bottom: 2px #e2e2e2 solid;
+		@include  border-bottom
 		height: 100rpx;
 		margin-bottom: 50rpx;
 
@@ -142,46 +140,5 @@
 		}
 	}
 
-	.bubbles {
 
-		display: flex;
-		align-items: center;
-		transform-origin: center center;
-
-		margin: 0 auto;
-		transition: ease-out .7s;
-		width: 150px;
-		background-color: $bg;
-		border-radius: 25px;
-		height: 50px;
-		border: 0;
-
-	}
-
-	.expand {
-		// width: 300px;
-		// height: 100px;
-		// border-radius: 50px;
-		transform: scale(1.5);
-		background-color: $assistance;
-	}
-
-	.submit {
-		position: absolute;
-		left: 50%;
-		transform: translateX(-75px);
-		border: 0px;
-		margin: auto auto;
-		width: 150px;
-		background-color: rgba($bg, $alpha: 0.0);
-		border-radius: 25px;
-		height: 50px;
-		font-size: 20px;
-		text-align: center;
-		color: white;
-	}
-
-	.submit::after {
-		border: 0px;
-	}
 </style>

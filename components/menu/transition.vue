@@ -58,7 +58,6 @@
 				showIndex: 0,
 				hiding: 0,
 				ListLeft: '-260rpx',
-
 				backShow: false,
 				showTopics: false,
 				plan: [],
