@@ -54,7 +54,7 @@
 	export default {
 		data() {
 			return {
-
+				
 				showIndex: 0,
 				hiding: 0,
 				ListLeft: '-260rpx',
@@ -108,7 +108,7 @@
 		},
 		watch: {
 			myData() {
-				console.log(1)
+			
 				if (this.showTopics) this.showSwitch();
 			}
 		},
@@ -192,6 +192,7 @@
 			this.myData = this.topics
 			//点击菜单
 			this.bus.$on('showTopics', () => {
+				
 				if (!delayTime) {
 					// #ifndef MP-WEIXIN
 					var dom = document.getElementsByClassName('transition')

@@ -1,7 +1,7 @@
 <template>
 	<view class="mask">
-		<view :class="{'gray':maskShow}"></view>
-		<view :class="{'blur':maskShow}">
+		<view :class="{'gray':maskShow}" @click="$emit('maskClick')"></view>
+		<view :class="{'blur':maskShow}" style="height: 90%;">
 			<slot></slot>
 		</view>
 		
@@ -13,18 +13,19 @@
 		
 		data() {
 			return {
-				maskShow:false
+				
 			};
 		},
 		mounted(){
-				this.bus.$on('showTopics',()=>{
-					this.maskShow=!this.maskShow
-				})
+			
 		}
+		,props:['maskShow']
 	}
 </script>
 
 <style lang="scss">
+	.mask{
+		height: 100%;
 	
 		.gray{
 			width: 700px;
@@ -36,5 +37,7 @@
 		}
 		.blur{
 			filter: blur(2px);
+			
+		}
 		}
 </style>

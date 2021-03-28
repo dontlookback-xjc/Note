@@ -1,22 +1,25 @@
 <template>
 	<view  :style="{height:viewHeight}">
 	
-		<myMenu/>
-		<view  class="content">
-			<view  class="bottom">
-					<view>Last Schedule</view>
-					<view @click="newSchedule">New Schedule</view>
-		
+		<myMask>
+			<view  class="content">
 				
-				</view>
-	</view>
+					<view  class="bottom">
+							<view>Last Schedule</view>
+							<view @click="newSchedule">New Schedule</view>
+					
+					</view>
+			</view>
+		</myMask>
+		
 	</view>
 
 
 </template>
 
 <script>
-	import myMenu from "@/components/menu/index.vue"
+
+	import myMask from  "@/components/mask/index.vue"
 	export default {
 		data(){
 			return{
@@ -24,12 +27,12 @@
 			}
 		},
 		components: {
-			myMenu
+			myMask
 		},
 		methods:{
 			newSchedule(){
 				uni.navigateTo({
-					// url:'../plan/index'
+					url:'../newSchedule/index'
 				})
 			}
 		},
@@ -37,7 +40,8 @@
 			uni.getSystemInfo({
 							success:(res)=>{
 								console.log(JSON.stringify(res))
-								this.viewHeight=res.windowHeight-44+'px'
+								// this.viewHeight=res.windowHeight-44+'px'
+								this.viewHeight=res.windowHeight+'px'
 								
 							
 							}

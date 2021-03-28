@@ -1,6 +1,6 @@
 
 	 function form(value){
-		var obj={text:'',message:'input something',flag:false}
+		var obj={text:'',message:'input something'}
 		 Object.assign(obj,value)
 		 return obj
 	}

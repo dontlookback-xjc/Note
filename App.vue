@@ -3,7 +3,7 @@
 		onLaunch() {
 			try {
 				var plan = uni.getStorageSync('plan');
-				console.log('app', plan);
+			
 				if (plan) {
 					this.bus.plan = plan
 				} else {
