@@ -1,7 +1,7 @@
 <template>
 	<view style="height:100%">
 		<my-menu title="New Plan"></my-menu>
-		<my-mask :maskShow="maskShow">
+		<my-mask :maskShow="maskShow" @maskClick="maskClick">
 			<slot></slot>
 		</my-mask>
 	</view>
@@ -21,10 +21,16 @@
 			myMenu,
 			myMask
 		},
+		methods:{
+			maskClick(){
+				this.bus.$emit('showTopics')
+			}
+		},
 		mounted(){
 				this.bus.$on('showTopics', () => {
 					this.maskShow=!this.maskShow
 				})
+				
 		}
 	}
 </script>

@@ -5,7 +5,7 @@
 			<view  class="content">
 				
 					<view  class="bottom">
-							<view>Last Schedule</view>
+							<view @click="lastSchedule">Last Schedule</view>
 							<view @click="newSchedule">New Schedule</view>
 					
 					</view>
@@ -32,7 +32,25 @@
 		methods:{
 			newSchedule(){
 				uni.navigateTo({
-					url:'../newSchedule/index'
+					url:'../setSchedule/index'
+				})
+			},
+			lastSchedule(){
+				uni.getStorage({
+					key:'schedule',
+					success:(data)=>{
+						let array=data.data
+						uni.navigateTo({
+							url:"../schedule/index",
+							success: (res) => {
+								// 通过eventChannel向被打开页面传送数据
+							
+								res.eventChannel.emit('acceptDataFromOpenerPage', {
+									data:array[array.length-1]
+								})
+							},
+						})
+					}
 				})
 			}
 		},

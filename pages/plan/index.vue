@@ -44,7 +44,6 @@
 				let result = true
 				form.forEach((item) => {
 					if (!item.text) {
-					
 						item.message = "value required"
 						result = false
 					}

@@ -3,42 +3,26 @@
 	<view>
 		<view class="topics" :style="{left:showTopics?'0':ListLeft}">
 
-			<!-- #ifdef MP-WEIXIN -->
-			<transition name="fade">
 
-				<box style="position: relative;" v-show="backShow">
-					<!-- 获得父列表 -->
-					<view @click="delayClick(backTopics)">
-						···
-					</view>
-				</box>
-			</transition>
-
-			<box :class="{'show':(index<showIndex)-hiding,'transition':true}" v-for="(value,index) in myData "
-				:key="index">
-				<!-- /获得子列表 -->
-				<view @click="delayClick(showMessage,value);">
-					{{value[keyName]}}
-				</view>
-			</box>
-			<!-- #endif -->
 
 			<!-- #ifndef MP-WEIXIN -->
 			<transition name="fade">
 
-				<component :is="componentName" style="position: relative;" v-show="backShow">
+				<component :is="componentName" style="position: relative;" v-show="!temp">
 					<!-- 获得父列表 -->
-					<view @click="delayClick(backTopics)">
-						···
+					<!-- cb后为 1级 有temp 为all,cb前0级无temp all . cb后0级有temp 点,cb前1级无temp点  -->
+					<view @click="delayClick(all)" v-html="level+Boolean(temp)==1 ?'...':'All'">
+
 					</view>
 				</component>
 			</transition>
 
-			<component :is="componentName" :class="{'show':hiding?index>showIndex:index<showIndex,'transition':true}"
-				v-for="(value,index) in myData " :key="index">
+			<component :is="componentName" class="transition" :class="{'show':hiding?index>showIndex:index<showIndex}"
+				v-for="(value,index) in temp?temp:list " :key="index">
 				<!-- /获得子列表 -->
 				<view @click="delayClick(showMessage,value);">
-					{{value[keyName]}}
+					<!-- {{level?value:index}} -->
+					{{level+Boolean(temp)==1?value.name:value}}
 				</view>
 			</component>
 			<!-- #endif -->
@@ -54,15 +38,15 @@
 	export default {
 		data() {
 			return {
-				
+
 				showIndex: 0,
 				hiding: 0,
 				ListLeft: '-260rpx',
-				backShow: false,
 				showTopics: false,
-				plan: [],
-				myData: undefined,
-				keyName: 'subject',
+				schedule: [],
+				keyName: '',
+				level: 0,
+				temp: null
 
 			}
 		},
@@ -76,58 +60,64 @@
 		},
 		computed: {
 
-			duration() {
-				return Math.ceil(2 / this.myData.length) * 150
-			},
 			list() {
-				this.plan.Map((item, index) => {
-					return item.index = index
-				})
+				//二级
+				if (this.level) {
+					if (this.keyName) return this.sorted[this.keyName]
+					else return this.schedule
+				}
+				//一级
+				else {
+					return Object.keys(this.sorted)
+				}
 			},
-			//{key(string type):value（array plans}}
-			secondTopics() {
+			duration() {
+				let ar = this.temp ? this.temp : this.list
+
+				return Math.ceil(2 / ar.length) * 150
+
+
+
+			},
+
+			sorted() {
 				let set = {};
 				//无分类数据
-				this.plan.forEach((item) => {
-					if (!set[item.subject]) {
-						set[item.subject] = []
+				this.schedule.forEach((item) => {
+					if (!set[item.type]) {
+						set[item.type] = []
 					}
-					set[item.subject].push(item)
+					set[item.type].push(item)
 				})
 				return set
 			},
-			topics() {
-				let result = []
-				for (let key in this.secondTopics) {
-					result.push({
-						subject: key
-					})
-				}
-				return result
-			}
-		},
-		watch: {
-			myData() {
-			
-				if (this.showTopics) this.showSwitch();
-			}
+
 		},
 		methods: {
+			all() {
+				if (this.level) {
+					this.level = 0;
+				} else {
+					this.level = 1;
+				}
+			},
 			showSwitch(add = true) {
-			
 				if (interval) {
 					return;
 				}
-				this.showIndex = 0;
-
 				add ? this.hiding = 0 : this.hiding = 1;
+				this.showIndex = 0;
 				//根据数量返回合适时间间隔
-				if (this.myData.length) {
-
-
+				if (true) {
 					interval = setInterval(() => {
 						this.showIndex += 1;
-						let flag = this.showIndex % this.myData.length;
+						let flag
+						if (!add) {
+
+							flag = this.showIndex % this.temp.length;
+						} else {
+							flag = this.showIndex % this.list.length
+						}
 						//结束判断
 						if (!flag) {
 							clearInterval(interval)
@@ -140,65 +130,64 @@
 			delayClick(cb) {
 				var params = Array.prototype.slice.call(arguments, 1)
 
-				if (cb === this.showMessage) {
+				this.temp = JSON.parse(JSON.stringify(this.list))
+				cb(...params)
+
+
+				//等返回按钮隐藏
+				setTimeout(() => {
 					this.showSwitch(false);
-					//等隐藏
 					setTimeout(() => {
-						this.backShow = 1;
-						cb(...params)
+						this.temp = null;
+						this.showSwitch();
 					}, delayTime)
 
-				} else {
-					this.backShow = 0
-					//等返回按钮隐藏
-
-					setTimeout(() => {
-						this.showSwitch(false);
-
-					}, this.duration)
-					setTimeout(() => {
-						cb(...params)
-					}, delayTime)
-				}
-
+				}, this.duration)
 
 			},
 			showMessage(item) {
-				if (item.index) {
-					uni.navigateTo({})
+				if (this.level) {
+
+					uni.navigateTo({
+						url: '../../pages/schedule/index',
+						success: (res) => {
+							// 通过eventChannel向被打开页面传送数据
+
+							res.eventChannel.emit('acceptDataFromOpenerPage', {
+								data: item
+							})
+						},
+					})
 					return
 				} else {
-					this.myData = this.secondTopics[item.subject];
-					this.keyName = 'title'
+					this.keyName = item
+					this.level = 1
 				}
-
 			},
-			backTopics() {
 
-				this.myData = this.topics;
-				this.keyName = 'subject'
-			}
 		},
 
 		components: {
 			box
 		},
 		mounted() {
-			this.plan = this.bus.plan
-			this.bus.$on('change', () => {
-				this.plan = this.bus.plan
-
+			uni.getStorage({
+				key: 'schedule',
+				success: (res) => {
+					this.schedule = res.data
+				}
 			})
-			this.myData = this.topics
+			var dom = document.getElementsByClassName('transition')
+
+
 			//点击菜单
 			this.bus.$on('showTopics', () => {
-				
 				if (!delayTime) {
+
 					// #ifndef MP-WEIXIN
-					var dom = document.getElementsByClassName('transition')
+
 					var time = getComputedStyle(dom[0], null)['transition-duration']
 					delayTime = time.slice(0, -1) * 1000
-					console.log(delayTime)
 
 					// #endif
 
@@ -207,11 +196,8 @@
 					delayTime = 700
 					// #endif
 				}
-		
 				this.showTopics = !this.showTopics;
-				
-				if(this.keyName=='title') this.backShow=!this.backShow
-				console.log(this.myData)
+
 				if (this.showTopics) setTimeout(this.showSwitch, 50)
 				else setTimeout(this.showSwitch(false), 50)
 			})
@@ -229,7 +215,7 @@
 		left: 0;
 		position: absolute;
 		z-index: 19;
-		
+
 	}
 
 	// 1

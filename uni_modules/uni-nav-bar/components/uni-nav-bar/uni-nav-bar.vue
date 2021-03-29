@@ -231,13 +231,13 @@
 	}
 
 	.uni-navbar--shadow {
-		/* #ifndef APP-NVUE */
-		box-shadow: 0 1px 6px #ccc;
-		/* #endif */
+		
+		box-shadow: 0 0px 0px #ccc;
+	
 	}
 
 	.uni-navbar--border {
-		border-bottom-width: 1rpx;
+		border-bottom-width: 0rpx;
 		border-bottom-style: solid;
 		border-bottom-color: $uni-border-color;
 	}

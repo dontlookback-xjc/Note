@@ -2,7 +2,7 @@
 	<view style="width: 90%;margin: 0 auto;padding-top:100rpx ;">
 		<form>
 			<label v-for="(item,index) in form" :key="index"> {{item.input}}
-				<input type="text" v-model="item.text"
+				<input type="text" @input="change($event,index)" :value="item.text"
 				 class="text" :class="{'error':item.flag}"
 					:placeholder="item.message" />
 			</label>
@@ -28,17 +28,9 @@
 			bubbleButton
 		},
 		computed: {
-			formData() {
-				return this.form.reduce(
-					(total, item) => {
-						let obj = {};
-						obj[item.input] = item.text
-						return Object.assign(total, obj)
-					}, {}
-
-				)
-			},
+			
 			form(){
+				
 				return this.formAttribute.map((item)=>{
 					return this.formClass(item)
 				})
@@ -46,10 +38,19 @@
 			
 		},
 		methods: {
+			change(e,index){
+				
+			
+				this.$set(this.form[index],'text',e.detail.value)
+			
+				
+				
+			},
 		 async handleClick(){
-		
+			 
+
 				this.isExpand=true
-			await this.handleSubmit(this.form,this.formData)
+			await this.handleSubmit(this.form)
 				this.isExpand=false
 		
 		}

@@ -1,6 +1,6 @@
 <template>
 	<view class="mask">
-		<view :class="{'gray':maskShow}" @click="$emit('maskClick')"></view>
+		<view :class="{'gray':maskShow}" @click="$emit('maskClick');"></view>
 		<view :class="{'blur':maskShow}" style="height: 90%;">
 			<slot></slot>
 		</view>
@@ -17,6 +17,9 @@
 			};
 		},
 		mounted(){
+			
+		},
+		methods:{
 			
 		}
 		,props:['maskShow']

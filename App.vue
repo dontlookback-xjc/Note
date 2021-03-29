@@ -1,3 +1,4 @@
+
 <script>
 	export default {
 		onLaunch() {
@@ -29,10 +30,7 @@
 					});
 					this.bus.plan = data
 
-
 				}
-
-
 			} catch (e) {
 				uni.showToast({
 					title: 'error',
@@ -43,8 +41,17 @@
 
 	}
 </script>
-
+<script src="./iconfont.js" type="text/javascript"></script>
 <style>
+
+	.icon {
+	  width: 1em;
+	  height: 1em;
+	  vertical-align: -0.15em;
+	  fill: currentColor;
+	  overflow: hidden;
+	}
+
 	body {
 		overflow-y: hidden;
 	}
