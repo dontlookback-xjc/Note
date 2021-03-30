@@ -1,7 +1,7 @@
 <template>
 	<view  :style="{height:viewHeight}">
 	
-		<myMask>
+		<myMask :title="title">
 			<view  class="content">
 				
 					<view  class="bottom">
@@ -23,7 +23,8 @@
 	export default {
 		data(){
 			return{
-				viewHeight:0
+				viewHeight:0,
+				title:'Index'
 			}
 		},
 		components: {

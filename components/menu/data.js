@@ -1,7 +1,7 @@
 
 import d from "@/js/Date.js"
 
-var time=d.Format('YYYY-MM-DD')
+var time=d().Format('YYYY-MM-DD')
 
 var plans=[{
 						name: '跑步',

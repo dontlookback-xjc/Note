@@ -4,7 +4,7 @@
 		
 		</view>
 		<button @click="handleClick" class="submit">
-		{{isExpand?'Loading':'Submit'}}
+		{{isExpand?'Loading':(text?text:'Submit')}}
 		</button>
 	</view>
 </template>
@@ -13,7 +13,8 @@
 	export default {
 		props:[
 			'handleClick',
-			'isExpand'
+			'isExpand',
+			'text'
 		]
 	}
 </script>

@@ -24,5 +24,7 @@ Date.prototype.Format = function(formatStr){   
   
     return str;   
 } 
-var d=new Date()
+var d= function( time){
+		return time?new Date(time):new Date()
+} 
 export default d

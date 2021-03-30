@@ -45,7 +45,16 @@
 			}
 		
 		
+		},{
+			"path": "pages/edit/index",
+			"style": {
+		
+				"enablePullDownRefresh": false
+			}
+		
+		
 		}
+	    
 	    ,{
             "path" : "pages/schedule/index",
             "style" :                                                                                    

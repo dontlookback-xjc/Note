@@ -199,7 +199,7 @@
 				this.showTopics = !this.showTopics;
 
 				if (this.showTopics) setTimeout(this.showSwitch, 50)
-				else setTimeout(this.showSwitch(false), 50)
+			
 			})
 
 		}

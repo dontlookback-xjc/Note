@@ -8,6 +8,7 @@
 </template>
 
 <script>
+	var update,schedule,index
 	import myForm from "@/components/plan/plan.vue"
 
 	import formClass from "@/components/plan/form.js"
@@ -26,11 +27,13 @@
 					}
 				],
 				formClass,
-				isExpand: false
+				isExpand: false,
+				update:false
 			};
 		},
 		methods: {
 			async checkForm(form) {
+				
 				var formData=form.reduce(
 					(total, item) => {
 						let obj = {};
@@ -47,8 +50,11 @@
 					}
 
 				})
+			
 				if (result) {
+				
 					if (openerPage) {
+						
 						var obj = {
 							addTime: new Date().getTime(),
 							schedule: openerPage
@@ -56,7 +62,30 @@
 						Object.assign(obj, formData)
 
 						await new Promise((resolve) => setTimeout(resolve, 300))
-						let schedule = uni.getStorageSync('schedule')
+						if(update){
+						
+							schedule[parseInt(index)]=obj
+							uni.setStorage({
+								key: 'schedule',
+								data: schedule,
+								success: () => {
+									uni.navigateTo({
+										url: '../schedule/index',
+										success: (res) => {
+											// 通过eventChannel向被打开页面传送数据
+										
+											res.eventChannel.emit('acceptDataFromOpenerPage', {
+												data:obj
+											})
+										},
+										
+									})
+								
+								}
+							});
+							return
+						}
+						schedule = uni.getStorageSync('schedule')
 						if(!schedule.length) schedule=[];
 						schedule.push(obj)
 						uni.setStorage({	
@@ -117,7 +146,11 @@
 			const eventChannel = this.getOpenerEventChannel()
 		
 			eventChannel.on('acceptDataFromOpenerPage', function(data) {
-				openerPage = data
+				 update=data.update
+				 schedule=data.schedule
+				 console.log(schedule)
+				 index=data.index
+				openerPage = data.data
 			})
 		}
 	}

@@ -20,7 +20,7 @@
 					<view class="setTime">
 
 						<view>SET FROM </view>
-						<input type="number" @blur="startTime=$event.detail.value;checkNum($event,'start')"
+						<input type="number" @blur="startTime=Math.floor( $event.detail.value);checkNum($event,'start')"
 							:value="startTime" />
 						<view style="padding: 0 20rpx;">TO</view>
 						<input type="number" @blur="endTime=$event.detail.value;checkNum($event,'end')"
@@ -31,12 +31,12 @@
 				<!-- 主体 -->
 				<view class="content" style="position: relative;">
 
-<!-- 右 -->
+					<!-- 右 -->
 					<view class="timeLine" id="timeLine" style="top:8px" v-if="lineShow">
 						<view v-for="(item,index) in clock" :key="index" :style="{height:clockHeight*2+'px'}">{{item}}
 						</view>
 					</view>
-<!-- 左 -->
+					<!-- 左 -->
 					<movable-area class="area" :style="{height:clock.length*clockHeight*2+100+'px'}">
 						<movable-view :y="item.y" class="plan" direction="vertical" @change="move($event,index)"
 							@touchend.stop="touchend(index)" @touchstart="touchstart(index)"
@@ -53,10 +53,10 @@
 				</view>
 			</view>
 			<view style="position: fixed;bottom: 20px;left: 50%;transform: translateX(-75px);">
-				<bubbleButton :handleClick="submit" ></bubbleButton>
+				<bubbleButton :handleClick="submit"></bubbleButton>
 			</view>
 		</my-mask>
-		
+
 		<!-- 底部列表 -->
 		<transition name="fade">
 
@@ -64,24 +64,21 @@
 				Choose a subject
 				<!-- 上部 -->
 				<view style="display: flex;">
-					<view class="subject" :class="{'active':subject===''}"
-					 @click="subject=''">All</view>
-					 <!-- key 遍历 -->
+					<view class="subject" :class="{'active':subject===''}" @click="subject=''">All</view>
+					<!-- key 遍历 -->
 					<view class="subject" :class="{'active':subject===item}"
-						v-for="(item,index) in Object.keys(sortedPlan)" 
-						@click="subject=item">
+						v-for="(item,index) in Object.keys(sortedPlan)" @click="subject=item">
 						{{item}}
 					</view>
 				</view>
-				
+
 				<hr style="border-color:#89e4ff;margin: 5px 0;">
 
 				<view class="boxWrap">
 
 					<view class="box" v-for="(item,index,array) in subject?sortPlan[subject]:StoragedPlan"
-					 :class="{'checked':item.checked}"
-						@click="choose(item)">
-						
+						:class="{'checked':item.checked}" @click="choose(item)">
+
 						<view>{{item.title}}</view>
 						<view style="height: 90rpx;width: 100%;overflow:hidden;
 					text-overflow: ellipsis;">{{item.detail}}
@@ -99,23 +96,25 @@
 <script>
 	var timeOut;
 	var flag = true;
+	var schedule,index,ar,update;
 	import bubbleButton from "../../components/bubbleButton.vue"
 	import myMask from "@/components/mask/mask.vue"
 	export default {
 		data() {
 			return {
-			
+
 				plan: [],
 				clockHeight: 25,
 				height: undefined,
-		
+
 				startTime: 8,
 				endTime: 16,
 				markTime: [],
 				maskShow: false,
 				subject: '',
 				planIndex: 0,
-				sortPlan: []
+				sortPlan: [],
+				update:false
 
 
 			};
@@ -158,7 +157,7 @@
 					}
 					set[item.subject].push(item)
 				})
-			
+
 				return set
 			}
 		},
@@ -170,14 +169,14 @@
 
 			},
 			choose(item) {
-			
+
 				item.checked = !item.checked
 				this.$forceUpdate()
 			},
 			move(e, index) {
 				this.plan[index].oldY = e.detail.y
 
-			
+
 
 			},
 			toAddPlan() {
@@ -188,14 +187,14 @@
 			addExistingPlan() {
 				this.maskShow = !this.maskShow
 
-				  this.StoragedPlan.forEach(
+				this.StoragedPlan.forEach(
 					(item) => {
-						Object.assign(item,{
+						Object.assign(item, {
 							checked: false
 						})
 					}
 				)
-			
+
 
 			},
 			checkNum(e, params) {
@@ -203,6 +202,8 @@
 				if (params == 'start') {
 					value < 0 ? this.startTime = 0 : '';
 					value > 24 ? this.startTime = 24 : '';
+					0 <= value <= 24 ? this.startTime = 24 : ''
+
 				}
 				if (params == 'end') {
 					value < 0 ? this.endTime = 0 : '';
@@ -212,28 +213,28 @@
 			},
 			touchstart(index) {
 				this.planIndex = index
-				
-				this.plan[index].oldY=this.plan[index].y
-				
-			
+
+				this.plan[index].oldY = this.plan[index].y
+
+
 			},
 			touchend() {
-				var item=this.plan[this.planIndex]
+				var item = this.plan[this.planIndex]
 				if (item.oldY !== null) {
-					
-					let num = Math.round(item.oldY/ (this.clockHeight))
+
+					let num = Math.round(item.oldY / (this.clockHeight))
 
 					num > this.clock.length * 2 - 2 ? num = this.clock.length * 2 - 2 : ''
-					
+
 					//防止原值不移动
-					item.y=item.oldY
+					item.y = item.oldY
 					// this.$set(this.y, this.planIndex, this.oldY[this.planIndex])
 					var roundY = num * (this.clockHeight)
-					
+
 
 					//邻近移动
 					setTimeout(() => {
-						item.y=roundY
+						item.y = roundY
 
 					}, 10)
 					//标记时间
@@ -244,56 +245,110 @@
 
 			},
 			existingPlanPush() {
-				this.StoragedPlan.forEach((item,index) => {
-					
+				this.StoragedPlan.forEach((item, index) => {
+
 					if (item.checked) {
-						Object.assign(item,{markTime:null}) 
-						let e={y:100*index,oldY:0}
-						let obj=Object.assign(e,item) 
-					
+						Object.assign(item, {
+							markTime: null
+						})
+						let e = {
+							y: 100 * index,
+							oldY: 0
+						}
+						let obj = Object.assign(e, item)
+
 						this.plan.push(obj)
 					}
 				})
-				
+
 				this.maskShow = !this.maskShow
-				
+
 			},
 
 			submit() {
-				
-				this.plan.forEach((item)=>{
-					if(!item.markTime) {
+
+				this.plan.forEach((item) => {
+					if (!item.markTime) {
 						uni.showToast({
 							title: '有尚未设定时间的计划'
 						})
 						return
 					}
 				})
-				
-	
-				var data=this.plan.map(item=>{
-				
-						let {detail,markTime,subject,title}=item
-						return {detail,markTime,subject,title}
+
+
+				var data = this.plan.map(item => {
+
+					let {
+						detail,
+						markTime,
+						subject,
+						title
+					} = item
+					return {
+						detail,
+						markTime,
+						subject,
+						title
+					}
 				})
-				
+
 				uni.navigateTo({
 					url: '../newSchedule/index',
 					success: (res) => {
 						// 通过eventChannel向被打开页面传送数据
-					
+
 						res.eventChannel.emit('acceptDataFromOpenerPage', {
-							data
+							data,
+							update,
+							index,
+							schedule
+							
+							
 						})
 					},
 				})
-			
+
 
 			}
 		},
+		onLoad(option) {
+
+			const eventChannel = this.getOpenerEventChannel()
+
+			eventChannel.on('acceptDataFromOpenerPage', (data) => {
+						console.log(data)
+					 schedule = data.data
+					index=data.index
+					ar = schedule[index].schedule;
+				
+					if (ar) {
+						update=true
+						this.plan = ar.map((item) => {
+							let pNum, y;
+							if (item.markTime.slice(-2, 1) === '3') pNum = Math.floor(item.markTime) + 0.5
+							else pNum = Math.floor(item.markTime)
+							//超过最迟
+							if (pNum > this.endTime) {
+								y = (this.endTime - this.startTime) * 2 * this.clockHeight
+							}
+							//少于最早
+							else {
+								let num = pNum - this.startTime
+								num >= 0 ? y = this.clockHeight * num * 2 : y = 0
+							}
+
+							return Object.assign({
+								y,
+								odlY: 0
+							}, item)
+						})
+					}
+			})
+		},
 		created() {
-			this.StoragedPlan=uni.getStorageSync('plan')
-			
+			this.StoragedPlan = uni.getStorageSync('plan')
+
 
 			// this.test();
 		}

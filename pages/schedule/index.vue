@@ -6,7 +6,7 @@
 		<!-- 主题 -->
 		<view class="content">
 			<view class="plan" v-for="(value,index) in array" 
-			:class="{'active':array[index].markTime<now&&array[index+1]>now}" >
+			:class="{'active':index==activeIndex}" >
 				<view class="i">
 					<svg class="icon" aria-hidden="true">
 						<use :href="'#icon-'+icon[value.subject]"></use>
@@ -23,6 +23,7 @@
 
 <script>
 	import d from "../../js/Date.js"
+	var interval
 	export default {
 		data() {
 			return {
@@ -43,7 +44,6 @@
 		}
 		,
 		methods: {
-			
 			back() {
 				
 					uni.navigateTo({
@@ -68,34 +68,60 @@
 		},
 		computed:{
 			array(){
-				return this.openerData.schedule.data
+				let result=this.openerData.schedule
+				result=result.sort((item,item2)=>{return item.markTime-item2.markTime})
+			
+				return result
+			},
+			activeIndex(){
+				var result
+				//不在范围
+				console.log(this.array)
+				let array=this.array.map(item=> parseInt(item.markTime))
+				if(this.now<array[0]||this.now>array[array.length-1])
+					
+				return  null
+				//范围之内
+				else {
+					let star=0,end=array.length-1;
+						function sort(start,end,array,target){
+							if(start==end) {
+								result=start; return start
+							}
+							let middle=Math.floor((star+end)/2)
+							let num=array[middle]
+							
+							
+							 if(num<target) sort(middle+1,end,array,target)
+							else if(num>target) sort(start,middle-1,array,target)
+							 
+							else if(num==target)  {result=middle; return}
+						
+						}
+					sort(0,end,array,parseFloat(this.now))
+					
+					return result
+					
+				}
 			}
 		},
 		onShow(){
 
-			var time=d.Format('h.mm')
-			this.now=time
+			this.now=d().Format('h.mm')
+			// interval=setInterval(()=>{
+			// 	this.now=d().Format('h.mm')
+			// },1000*60)
 		
 
-			
-				
 		},
-		onLoad(option) {
-		
-			
+		onUnload(){
+			clearInterval(interval) 
 		}
 	}
 </script>
 
 <style lang="scss">
-	.icon {
-		width: 1em;
-		height: 1em;
-		vertical-align: -0.15em;
-		fill: currentColor;
-		overflow: hidden;
-	
-	}
+
 	
 	.content {
 
@@ -124,6 +150,8 @@
 
 			.time {
 				flex: 1;
+				text-align: right;
+				padding-right:90rpx ;
 				
 			}
 
