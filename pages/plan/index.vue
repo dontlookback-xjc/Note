@@ -39,8 +39,8 @@
 			myMask
 		},
 		methods:{
-		async	checkForm(form,formData) {
-				
+		async	checkForm(form) {
+				console.log(form)
 				let result = true
 				form.forEach((item) => {
 					if (!item.text) {
@@ -50,11 +50,16 @@
 			
 				})
 				if (result) {
+				var plan={};
+				form.forEach((item)=>{
+					plan[item.input]=item.text
+				})
+				
 				
 			await	new Promise((resolve ) => setTimeout(resolve , 300));
 			
-					this.plan.push(formData)
-			
+					this.plan.push(plan)
+					console.log(this.plan)
 					uni.setStorage({
 						key: 'plan',
 						data: this.plan
@@ -64,13 +69,12 @@
 			}
 				
 		}
+	
 	,mounted() {
 			
-			this.plan=this.bus.plan
-			this.bus.$on('change',()=>{
-				this.plan=this.bus.plan
-			
-			})
+			this.plan=uni.getStorageSync('plan')
+			if(!this.plan) this.plan=[]
+			console.log(this.plan)
 		
 		}
 	

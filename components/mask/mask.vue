@@ -1,7 +1,7 @@
 <template>
 	<view class="mask">
 		<view :class="{'gray':maskShow}" @click="$emit('maskClick');"></view>
-		<view :class="{'blur':maskShow}" style="height: 90%;">
+		<view :class="{'blur':maskShow}" style="height: 100%;">
 			<slot></slot>
 		</view>
 		

@@ -3,8 +3,6 @@
 	<view>
 		<view class="topics" :style="{left:showTopics?'0':ListLeft}">
 
-
-
 			<!-- #ifndef MP-WEIXIN -->
 			<transition name="fade">
 

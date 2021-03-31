@@ -6,7 +6,8 @@
 			<uni-nav-bar left-icon="back" @clickLeft="back" title="New Schedule" backgroundColor="rgba( 173,215,237)"
 				fixed="true" shadow="true" color="white"></uni-nav-bar>
 			<view class="page">
-
+			
+			<!-- 两个按钮 -->
 				<view class="top">
 					<view style="padding-left: 20rpx;" @click="toAddPlan">
 						<uni-icons color="rgb(81, 157, 204)" type="plus" size="24" />
@@ -29,26 +30,34 @@
 					</view>
 				</view>
 				<!-- 主体 -->
-				<view class="content" style="position: relative;">
-
+				<view class="content" style="position: relative;display: flex;">
+					<view class="bg"  :style="{height:clock.length*clockHeight*2+100+'px',lineHeight:clock.length*clockHeight*2+100+'px'}">
+						←Delete
+					</view>
+					<view class="left" :class="{'leftShow':boundCheck}"
+					 :style="{height:clock.length*clockHeight*2+100+'px',lineHeight:clock.length*clockHeight*2+100+'px'}">
+						<svg class="icon"   aria-hidden="true" @click="deletePlan(index)">
+							<use href="#icon-shanchudefuben"></use>
+						</svg>
+					</view>
 					<!-- 右 -->
 					<view class="timeLine" id="timeLine" style="top:8px" v-if="lineShow">
 						<view v-for="(item,index) in clock" :key="index" :style="{height:clockHeight*2+'px'}">{{item}}
 						</view>
 					</view>
-					<!-- 左 -->
-					<movable-area class="area" :style="{height:clock.length*clockHeight*2+100+'px'}">
-						<movable-view :y="item.y" class="plan" direction="vertical" @change="move($event,index)"
-							@touchend.stop="touchend(index)" @touchstart="touchstart(index)"
-							v-for="(item,index) in plan" :key="index">
+					<!-- 移动区域 -->
+					<movable-area class="area" 
+					:style="{height:clock.length*clockHeight*2+100+'px'}" v-show="lineShow">
+						<movable-view :y="item.y" :x="item.x" out-of-bounds="true"
+						class="plan" direction="all"  @change="move($event,index)"
+							@touchend.stop="touchend(index)" @touchstart="touchstart(index)" 
+							v-for="(item,index) in plan" :key="index" >
 							<view class="title">{{item.title}} {{item.markTime}}</view>
 							<hr class="hr" />
 							<view class="detail">{{item.detail}}</view>
 
 						</movable-view>
 					</movable-area>
-
-
 
 				</view>
 			</view>
@@ -61,7 +70,7 @@
 		<transition name="fade">
 
 			<view :class="{'modal':maskShow}" v-if="maskShow">
-				Choose a subject
+			
 				<!-- 上部 -->
 				<view style="display: flex;">
 					<view class="subject" :class="{'active':subject===''}" @click="subject=''">All</view>
@@ -76,7 +85,7 @@
 
 				<view class="boxWrap">
 
-					<view class="box" v-for="(item,index,array) in subject?sortPlan[subject]:StoragedPlan"
+					<view class="box" v-for="(item,index,array) in subject?sortedPlan[subject]:StoragedPlan"
 						:class="{'checked':item.checked}" @click="choose(item)">
 
 						<view>{{item.title}}</view>
@@ -96,6 +105,7 @@
 <script>
 	var timeOut;
 	var flag = true;
+	var boundCheck;
 	var schedule,index,ar,update;
 	import bubbleButton from "../../components/bubbleButton.vue"
 	import myMask from "@/components/mask/mask.vue"
@@ -106,14 +116,14 @@
 				plan: [],
 				clockHeight: 25,
 				height: undefined,
-
+			
 				startTime: 8,
 				endTime: 16,
 				markTime: [],
 				maskShow: false,
 				subject: '',
 				planIndex: 0,
-				sortPlan: [],
+				
 				update:false
 
 
@@ -144,9 +154,16 @@
 
 			},
 			lineShow() {
-				// if(!this.endTime||this.endTime<=this.startTime) return false
-				// else
-				return true
+				if(this.endTime<this.startTime) {
+					uni.showToast({
+						title:'请设置正确的时间',
+						icon:'none'
+						
+					})
+					return false
+				}
+				
+				else return true
 			},
 			sortedPlan() {
 				let set = {};
@@ -174,10 +191,12 @@
 				this.$forceUpdate()
 			},
 			move(e, index) {
+					
 				this.plan[index].oldY = e.detail.y
-
-
-
+				this.plan[index].x = e.detail.x
+				if(e.detail.x<0) this.boundCheck=true
+				else this.boundCheck=false
+		
 			},
 			toAddPlan() {
 				uni.navigateTo({
@@ -194,15 +213,14 @@
 						})
 					}
 				)
-
-
 			},
 			checkNum(e, params) {
+			
 				var value = e.detail.value
 				if (params == 'start') {
 					value < 0 ? this.startTime = 0 : '';
 					value > 24 ? this.startTime = 24 : '';
-					0 <= value <= 24 ? this.startTime = 24 : ''
+					0 <= value <= 24 ? this.startTime = value : ''
 
 				}
 				if (params == 'end') {
@@ -215,11 +233,25 @@
 				this.planIndex = index
 
 				this.plan[index].oldY = this.plan[index].y
-
-
 			},
 			touchend() {
+				
 				var item = this.plan[this.planIndex]
+				if(item.x<0){
+					uni.showModal({   
+					    content: '确定要删除该计划吗',
+					    success:  (res)=> {
+					        if (res.confirm) {
+								
+								this.plan.splice(this.planIndex,1)
+								this.planIndex=null
+					            // console.log('用户点击确定');
+					        } else if (res.cancel) {
+					            // console.log('用户点击取消');
+					        }
+					    }
+					});
+				}
 				if (item.oldY !== null) {
 
 					let num = Math.round(item.oldY / (this.clockHeight))
@@ -228,6 +260,7 @@
 
 					//防止原值不移动
 					item.y = item.oldY
+					
 					// this.$set(this.y, this.planIndex, this.oldY[this.planIndex])
 					var roundY = num * (this.clockHeight)
 
@@ -235,8 +268,9 @@
 					//邻近移动
 					setTimeout(() => {
 						item.y = roundY
-
+					
 					}, 10)
+				
 					//标记时间
 					item.markTime = num % 2 ? this.clock[num / 2 - 0.5] + '.30' : this.clock[num / 2] +
 						'.00'
@@ -253,7 +287,8 @@
 						})
 						let e = {
 							y: 100 * index,
-							oldY: 0
+							oldY: 0,
+							x:0
 						}
 						let obj = Object.assign(e, item)
 
@@ -441,7 +476,7 @@
 		display: flex;
 		justify-content: space-between;
 		padding-bottom: 10rpx;
-
+		
 		.setTime {
 
 			display: flex;
@@ -458,19 +493,40 @@
 		}
 
 	}
+	.bg{
+		text-align: center;
+		font-size: 60px;
+		position: absolute;
+		width: 100%;
+		
+	}
+.left{
+		
+		color: white;font-size: 30px;
+		background-color:#ff3a3a;
+		width: 60rpx;
+		z-index: 0;
+		position: fixed;
+		transition: 0.4s;
+		opacity: 0;
 
+		}
+	.leftShow{
+		opacity: 1;
+		
+	}
 	.content {
+		overflow-x: hidden;
 		color: $bg;
 		width: 100%;
 
 		.area {
 			font-size: 16px;
 
-			width: 100%;
+			width: 50%;
 
 			.plan {
 
-				width: 100%;
 
 				color: white;
 
@@ -491,7 +547,7 @@
 
 				view {
 
-					margin-left: 10px;
+					margin-left: 30px;
 					padding-left: 10px;
 					font-size: 18px;
 					text-overflow: ellipsis;
@@ -501,6 +557,7 @@
 				}
 
 				.hr {
+					width: 750rpx;
 					margin: 0;
 					background-color: $bg;
 					border: 0;
@@ -508,7 +565,7 @@
 				}
 			}
 		}
-
+		
 		.timeLine {
 			position: absolute;
 			right: 0px;

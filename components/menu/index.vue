@@ -1,6 +1,6 @@
 <template>
 	<view style="overflow-y:hidden; ">
-		<uni-nav-bar left-icon="list" @clickLeft="bus.$emit('showTopics')" right-text="" :title="title"
+		<uni-nav-bar left-icon="list" @clickLeft="bus.$emit('showTopics')" right-icon="compose"  @clickRight="toEdit" :title="title"
 			backgroundColor="rgba( 173,215,237)" fixed="true" shadow="true" color="white"></uni-nav-bar>
 		<transitionList   style="z-index: 20;"></transitionList>
 	</view>
@@ -18,7 +18,11 @@
 			}
 		},
 		methods: {
-			
+			toEdit(){
+				uni.navigateTo({
+					url:"../../pages/edit/index"
+				})
+			}
 		},
 		components: {
 			transitionList

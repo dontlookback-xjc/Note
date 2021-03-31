@@ -55,16 +55,14 @@
 				})
 			}
 		},
+		beforeMount(){
+			this.viewHeight=this.bus.getViewHeight();
+			console.log(this.viewHeight)
+		},
 		mounted(){
-			uni.getSystemInfo({
-							success:(res)=>{
-								console.log(JSON.stringify(res))
-								// this.viewHeight=res.windowHeight-44+'px'
-								this.viewHeight=res.windowHeight+'px'
-								
-							
-							}
-						});
+			console.log(this.bus.viewHeight)
+			this.viewHeight=this.bus.viewHeight-44+"px"
+			console.log()
 		}
 	}
 </script>

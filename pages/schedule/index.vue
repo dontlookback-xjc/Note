@@ -1,6 +1,6 @@
 <template>
 	<view >
-		<uni-nav-bar left-icon="back" @clickLeft="back" right-text="" :title="openerData.name"
+		<uni-nav-bar left-icon="back" @clickLeft="back" right-text="" title="日程"
 			backgroundColor="rgba( 173,215,237)" shadow="false" color="white"></uni-nav-bar>
 		
 		<!-- 主题 -->
@@ -13,7 +13,10 @@
 					</svg>
 				</view>
 
-				<view class="detail">{{value.detail}}</view>
+				<view class="detail">
+				<view class="title">{{value.title+' : '}}</view>
+				<view>{{value.detail}}</view>
+				</view>
 				<view class="time"> {{value.markTime|replace}}</view>
 
 			</view>
@@ -33,7 +36,7 @@
 					'生活': 'icon'
 				},
 				openerData: undefined,
-				show:false,
+			
 				now:0
 			};
 		},
@@ -59,12 +62,16 @@
 		
 			eventChannel.on('acceptDataFromOpenerPage', (data)=>{
 				
+			
 				this.openerData = data.data
 				console.log(this.openerData)
-				this.show=true
+				
 				
 			
 			})
+		},
+		mounted(){
+			if(!this.openerData) {this.bus.toIndex() ;return}
 		},
 		computed:{
 			array(){
@@ -86,7 +93,8 @@
 					let star=0,end=array.length-1;
 						function sort(start,end,array,target){
 							if(start==end) {
-								result=start; return start
+								if(array[start]!=target)
+								result=start-1; return 
 							}
 							let middle=Math.floor((star+end)/2)
 							let num=array[middle]
@@ -105,12 +113,24 @@
 				}
 			}
 		},
+		watch:{
+			activeIndex(){
+				let plan=this.array[this.activeIndex]
+				uni.vibrate({
+				    success: function () {
+				        uni.showToast({
+				        	title:plan.title+' : '+plan.detail
+				        })
+				    }
+				});
+			}
+		},
 		onShow(){
-
+		
 			this.now=d().Format('h.mm')
-			// interval=setInterval(()=>{
-			// 	this.now=d().Format('h.mm')
-			// },1000*60)
+			interval=setInterval(()=>{
+				this.now=d().Format('h.mm')
+			},1000*60)
 		
 
 		},
@@ -130,10 +150,11 @@
 	background-color:$assistance ;
 }
 		.plan {
+			margin-top: 100rpx;
 			display: flex;
-			align-items: center;
+			
 			font-size: 20px;
-			height: 100rpx;
+			
 			.i {
 				font-size: 30px;
 				width: 20%;
@@ -144,8 +165,12 @@
 			
 
 			.detail {
+					font-size: 16px;
 				width: 55%;
-					
+					.title{
+						font-size: 20px;
+						color:$text
+					}
 			}
 
 			.time {
