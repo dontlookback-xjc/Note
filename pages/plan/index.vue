@@ -1,9 +1,13 @@
 <template>
 
-		<my-mask>
-			<myForm :formClass="formClass" :handleSubmit="checkForm"
+		<view>
+			<uni-nav-bar left-icon="home" @clickLeft="bus.toIndex" right-icon="compose"  @clickRight="toEdit" title="New Plan"
+				backgroundColor="rgba( 173,215,237)" fixed="true" shadow="true" color="white"></uni-nav-bar>
+				<myForm :formClass="formClass" :handleSubmit="checkForm"
 			 :formAttribute="formAttribute"  />
-		</my-mask>
+		
+		</view>
+		
 	
 </template>
 

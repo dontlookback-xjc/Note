@@ -3,11 +3,11 @@
 	<view style="overflow-y: scroll;height: 650px;">
 		<my-mask :maskShow="maskShow" @maskClick="maskShow=!maskShow">
 
-			<uni-nav-bar left-icon="back" @clickLeft="back" title="New Schedule" backgroundColor="rgba( 173,215,237)"
+			<uni-nav-bar left-icon="back" @clickLeft="back" title="Set Schedule" backgroundColor="rgba( 173,215,237)"
 				fixed="true" shadow="true" color="white"></uni-nav-bar>
 			<view class="page">
-			
-			<!-- 两个按钮 -->
+
+				<!-- 两个按钮 -->
 				<view class="top">
 					<view style="padding-left: 20rpx;" @click="toAddPlan">
 						<uni-icons color="rgb(81, 157, 204)" type="plus" size="24" />
@@ -31,12 +31,13 @@
 				</view>
 				<!-- 主体 -->
 				<view class="content" style="position: relative;display: flex;">
-					<view class="bg"  :style="{height:clock.length*clockHeight*2+100+'px',lineHeight:clock.length*clockHeight*2+100+'px'}">
+					<view class="bg"
+						:style="{height:clock.length*clockHeight*2+100+'px',lineHeight:clock.length*clockHeight*2+100+'px'}">
 						←Delete
 					</view>
 					<view class="left" :class="{'leftShow':boundCheck}"
-					 :style="{height:clock.length*clockHeight*2+100+'px',lineHeight:clock.length*clockHeight*2+100+'px'}">
-						<svg class="icon"   aria-hidden="true" @click="deletePlan(index)">
+						:style="{height:clock.length*clockHeight*2+100+'px',lineHeight:clock.length*clockHeight*2+100+'px'}">
+						<svg class="icon" aria-hidden="true" @click="deletePlan(index)">
 							<use href="#icon-shanchudefuben"></use>
 						</svg>
 					</view>
@@ -46,13 +47,12 @@
 						</view>
 					</view>
 					<!-- 移动区域 -->
-					<movable-area class="area" 
-					:style="{height:clock.length*clockHeight*2+100+'px'}" v-show="lineShow">
-						<movable-view :y="item.y" :x="item.x" out-of-bounds="true"
-						class="plan" direction="all"  @change="move($event,index)"
-							@touchend.stop="touchend(index)" @touchstart="touchstart(index)" 
-							v-for="(item,index) in plan" :key="index" >
-							<view class="title">{{item.title}} {{item.markTime}}</view>
+					<movable-area class="area" :style="{height:clock.length*clockHeight*2+100+'px'}" v-show="lineShow">
+						<movable-view :y="item.y" :x="item.x" out-of-bounds="true" class="plan" direction="all"
+							@change="move($event,index)" @touchend.stop="touchend(index)"
+							@touchstart="touchstart(index)" v-for="(item,index) in plan" :key="index+item.detail">
+							<view class="title"><text>{{item.title}}	</text>  <input style="display: inline-block;width: 90rpx;" type="text" :value="item.markTime"
+									@blur="changeTime($event,index)" /> </view>
 							<hr class="hr" />
 							<view class="detail">{{item.detail}}</view>
 
@@ -70,7 +70,7 @@
 		<transition name="fade">
 
 			<view :class="{'modal':maskShow}" v-if="maskShow">
-			
+
 				<!-- 上部 -->
 				<view style="display: flex;">
 					<view class="subject" :class="{'active':subject===''}" @click="subject=''">All</view>
@@ -105,10 +105,11 @@
 <script>
 	var timeOut;
 	var flag = true;
-	var boundCheck;
-	var schedule,index,ar,update;
+	var t
+	var schedule, index, ar, update;
 	import bubbleButton from "../../components/bubbleButton.vue"
 	import myMask from "@/components/mask/mask.vue"
+	import timToY from "@/js/timeToY.js"
 	export default {
 		data() {
 			return {
@@ -116,15 +117,15 @@
 				plan: [],
 				clockHeight: 25,
 				height: undefined,
-			
+
 				startTime: 8,
 				endTime: 16,
 				markTime: [],
 				maskShow: false,
 				subject: '',
 				planIndex: 0,
-				
-				update:false
+				boundCheck: false,
+				update: false
 
 
 			};
@@ -154,16 +155,14 @@
 
 			},
 			lineShow() {
-				if(this.endTime<this.startTime) {
+				if (this.endTime < this.startTime) {
 					uni.showToast({
-						title:'请设置正确的时间',
-						icon:'none'
-						
+						title: '请设置正确的时间',
+						icon: 'none'
+
 					})
 					return false
-				}
-				
-				else return true
+				} else return true
 			},
 			sortedPlan() {
 				let set = {};
@@ -180,9 +179,16 @@
 		},
 		methods: {
 			back() {
-				uni.navigateTo({
-					url: '../index/index'
-				})
+				let pages = getCurrentPages();
+				if (pages.length > 1) {
+					uni.navigateBack()
+				} else {
+					uni.navigateTo({
+						url: '../index/index',
+						events: {}
+					})
+				}
+
 
 			},
 			choose(item) {
@@ -191,12 +197,12 @@
 				this.$forceUpdate()
 			},
 			move(e, index) {
-					
+
 				this.plan[index].oldY = e.detail.y
 				this.plan[index].x = e.detail.x
-				if(e.detail.x<0) this.boundCheck=true
-				else this.boundCheck=false
-		
+				if (e.detail.x < 0) this.boundCheck = true
+				else this.boundCheck = false
+
 			},
 			toAddPlan() {
 				uni.navigateTo({
@@ -215,7 +221,7 @@
 				)
 			},
 			checkNum(e, params) {
-			
+
 				var value = e.detail.value
 				if (params == 'start') {
 					value < 0 ? this.startTime = 0 : '';
@@ -235,21 +241,21 @@
 				this.plan[index].oldY = this.plan[index].y
 			},
 			touchend() {
-				
+
 				var item = this.plan[this.planIndex]
-				if(item.x<0){
-					uni.showModal({   
-					    content: '确定要删除该计划吗',
-					    success:  (res)=> {
-					        if (res.confirm) {
-								
-								this.plan.splice(this.planIndex,1)
-								this.planIndex=null
-					            // console.log('用户点击确定');
-					        } else if (res.cancel) {
-					            // console.log('用户点击取消');
-					        }
-					    }
+				if (item.x < 0) {
+					uni.showModal({
+						content: '确定要删除该计划吗',
+						success: (res) => {
+							if (res.confirm) {
+
+								this.plan.splice(this.planIndex, 1)
+								this.planIndex = null
+								// console.log('用户点击确定');
+							} else if (res.cancel) {
+								// console.log('用户点击取消');
+							}
+						}
 					});
 				}
 				if (item.oldY !== null) {
@@ -260,7 +266,7 @@
 
 					//防止原值不移动
 					item.y = item.oldY
-					
+
 					// this.$set(this.y, this.planIndex, this.oldY[this.planIndex])
 					var roundY = num * (this.clockHeight)
 
@@ -268,9 +274,9 @@
 					//邻近移动
 					setTimeout(() => {
 						item.y = roundY
-					
+
 					}, 10)
-				
+
 					//标记时间
 					item.markTime = num % 2 ? this.clock[num / 2 - 0.5] + '.30' : this.clock[num / 2] +
 						'.00'
@@ -288,7 +294,7 @@
 						let e = {
 							y: 100 * index,
 							oldY: 0,
-							x:0
+							x: 0
 						}
 						let obj = Object.assign(e, item)
 
@@ -299,7 +305,18 @@
 				this.maskShow = !this.maskShow
 
 			},
+			changeTime(e, index) {
+				let item=this.plan[index]
+				t = timToY(this.startTime, this.endTime, this.clockHeight)
+				console.log(this.plan,index)
+				let time=e.detail.value
+			
+				if(time>this.endTime) time=this.endTime+":00"
+				if(time<this.startTime) time=this.startTime+":00"
+				item.markTime=time
+				item.y=t(item)
 
+			},
 			submit() {
 
 				this.plan.forEach((item) => {
@@ -334,12 +351,7 @@
 						// 通过eventChannel向被打开页面传送数据
 
 						res.eventChannel.emit('acceptDataFromOpenerPage', {
-							data,
-							update,
-							index,
-							schedule
-							
-							
+							data
 						})
 					},
 				})
@@ -352,33 +364,20 @@
 			const eventChannel = this.getOpenerEventChannel()
 
 			eventChannel.on('acceptDataFromOpenerPage', (data) => {
-						console.log(data)
-					 schedule = data.data
-					index=data.index
-					ar = schedule[index].schedule;
-				
-					if (ar) {
-						update=true
-						this.plan = ar.map((item) => {
-							let pNum, y;
-							if (item.markTime.slice(-2, 1) === '3') pNum = Math.floor(item.markTime) + 0.5
-							else pNum = Math.floor(item.markTime)
-							//超过最迟
-							if (pNum > this.endTime) {
-								y = (this.endTime - this.startTime) * 2 * this.clockHeight
-							}
-							//少于最早
-							else {
-								let num = pNum - this.startTime
-								num >= 0 ? y = this.clockHeight * num * 2 : y = 0
-							}
 
-							return Object.assign({
-								y,
-								odlY: 0
-							}, item)
-						})
-					}
+				var key = data.key
+
+				ar = uni.getStorageSync('schedule')[key].schedule;
+				//获得数据,根据时间移动到近似位置
+				if (ar) {
+					var t = timToY(this.startTime, this.endTime, this.clockHeight)
+					this.plan = ar.map((item) => {
+						return Object.assign({
+							y: t(item),
+							odlY: 0
+						}, item)
+					})
+				}
 			})
 		},
 		created() {
@@ -476,7 +475,7 @@
 		display: flex;
 		justify-content: space-between;
 		padding-bottom: 10rpx;
-		
+
 		.setTime {
 
 			display: flex;
@@ -493,28 +492,33 @@
 		}
 
 	}
-	.bg{
+
+	.bg {
 		text-align: center;
 		font-size: 60px;
 		position: absolute;
 		width: 100%;
-		
+
 	}
-.left{
-		
-		color: white;font-size: 30px;
-		background-color:#ff3a3a;
+
+	.left {
+
+		color: white;
+		font-size: 30px;
+		background-color: #ff3a3a;
 		width: 60rpx;
 		z-index: 0;
 		position: fixed;
 		transition: 0.4s;
 		opacity: 0;
 
-		}
-	.leftShow{
-		opacity: 1;
-		
 	}
+
+	.leftShow {
+		opacity: 1;
+
+	}
+
 	.content {
 		overflow-x: hidden;
 		color: $bg;
@@ -535,6 +539,9 @@
 					width: 220rpx;
 					border-radius: 13px 13px 0 0;
 					font-size: 14px;
+					display: flex;
+					align-items: center;
+					
 				}
 
 				.detail {
@@ -565,7 +572,7 @@
 				}
 			}
 		}
-		
+
 		.timeLine {
 			position: absolute;
 			right: 0px;

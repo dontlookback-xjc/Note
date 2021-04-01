@@ -34,11 +34,11 @@
 			};
 		},
 		methods:{
-			checkForm(form,formData){
+			checkForm(form){
 				let result=true;
 				form.forEach((item) => {
 					if (!item.text) {
-					
+						item.flag=true
 						item.message = "value required"
 						result = false
 					}
@@ -46,6 +46,17 @@
 				})
 				console.log(result)
 			if(result){
+			
+			var formData=form.reduce(
+				(total, item) => {
+					let obj = {};
+					if(item.input=='date'){
+						obj[item.input] = item.text.replace(/-/g,'.')
+					}
+					else
+					obj[item.input] = item.text
+					return Object.assign(total, obj)
+				}, {})
 			
 				let pages=getCurrentPages();
 				if(pages.length>1){

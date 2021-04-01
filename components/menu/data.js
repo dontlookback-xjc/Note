@@ -30,7 +30,5 @@ var plans=[{
 					}
 
 				]
-				plans.forEach((item)=>{
-					item.timeAdd=time
-				})
+			
 export default plans

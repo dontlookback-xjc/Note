@@ -44,7 +44,8 @@
 				schedule: [],
 				keyName: '',
 				level: 0,
-				temp: null
+				temp: null,
+				unsorted:[]
 
 			}
 		},
@@ -62,7 +63,9 @@
 				//二级
 				if (this.level) {
 					if (this.keyName) return this.sorted[this.keyName]
-					else return this.schedule
+					else{
+						return this.unsorted
+					} return  
 				}
 				//一级
 				else {
@@ -77,16 +80,20 @@
 
 
 			},
-
+		
 			sorted() {
 				let set = {};
 				//无分类数据
-				this.schedule.forEach((item) => {
+				let key
+				for(key in this.schedule){
+					let item=this.schedule[key]
+					this.unsorted.push(item)
 					if (!set[item.type]) {
 						set[item.type] = []
 					}
 					set[item.type].push(item)
-				})
+				}
+			
 				return set
 			},
 
@@ -106,13 +113,20 @@
 				add ? this.hiding = 0 : this.hiding = 1;
 				this.showIndex = 0;
 				//根据数量返回合适时间间隔
+				let flag
 				if (true) {
 					interval = setInterval(() => {
+						
 						this.showIndex += 1;
-						let flag
+					
 						if (!add) {
-
-							flag = this.showIndex % this.temp.length;
+							let sub
+						
+							if(this.temp){sub=this.temp.length}
+							else sub=this.list.length
+						
+							
+							flag = this.showIndex % sub;
 						} else {
 							flag = this.showIndex % this.list.length
 						}
@@ -147,12 +161,12 @@
 				if (this.level) {
 
 					uni.navigateTo({
-						url: '../../pages/schedule/index',
+						url: '../../pages/setSchedule/index',
 						success: (res) => {
 							// 通过eventChannel向被打开页面传送数据
 
 							res.eventChannel.emit('acceptDataFromOpenerPage', {
-								data: item
+								key:item.date
 							})
 						},
 					})
@@ -195,9 +209,9 @@
 					// #endif
 				}
 				this.showTopics = !this.showTopics;
-
-				if (this.showTopics) setTimeout(this.showSwitch, 50)
 			
+				if (this.showTopics) setTimeout(this.showSwitch, 50)
+				else this.showSwitch(false)
 			})
 
 		}

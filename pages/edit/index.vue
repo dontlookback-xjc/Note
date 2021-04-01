@@ -1,23 +1,23 @@
 <template>
 	<view>
-		<uni-nav-bar left-icon="home"  @clickLeft="bus.toIndex"  @clickRight="multiple=!multiple" :right-text="multiple?'取消':'多选'" title="Edit"
+		<uni-nav-bar left-icon="home"  @clickLeft="bus.toIndex"  @clickRight="modelMultiple" :right-text="multiple?'取消':'多选'" title="Edit"
 			backgroundColor="rgba( 173,215,237)" fixed="true" color="white"></uni-nav-bar>
 		<view style="display: flex;"> 
-		<view class="tab" :class="{'stab':tabIndex==1}" @click="tabIndex=0">Schedule   </view>
-		<view  class="tab" :class="{'stab':tabIndex==0}" @click="tabIndex=1">Plan</view>
+		<view class="tab" :class="{'stab':tabIndex==1}" @click="multiple?'':tabIndex=0">Schedule   </view>
+		<view  class="tab" :class="{'stab':tabIndex==0}" @click="multiple?'':tabIndex=1">Plan</view>
 		</view>
 		
-		<empty v-if="!schedule.length&&tabIndex==0" />
-
+		<empty v-if="!typeof schedule=='object'&&tabIndex==0" />
+<checkbox-group @change="change">
 		<transition name="slide-fade">
 			<view  v-if="tabIndex===0" class="content" :style="{left:multiple?'0rpx':left,height:bus.viewHeight}" >
-				<view v-if="schedule.length" v-for="(item,index) in schedule" :key="item.addTime">
+				<view v-if="typeof schedule=='object'" v-for="(item,index) in schedule" :key="item.addTime">
 					<!-- 行 -->
 					<label class="schedule">
 						<!-- 左 -->
-						<checkbox-group @change="change">
-							<checkbox class="left" :value="index.toString()" :style="{opacity:multiple?1:0}" />
-						</checkbox-group>
+						
+							<checkbox class="left" :value="item.date" :style="{opacity:multiple?1:0}" />
+					
 						<!-- 中 -->
 						<view style="height: 100rpx;width: 500rpx;padding:0 50rpx;">
 							<view style="display: flex;justify-content: space-between;align-items: center;">
@@ -28,16 +28,15 @@
 							</view>
 
 							<view class="plan">事项：
-								<view v-for="(plan,pindex) in item.schedule" class="cell" style="color: gray;">
-
-									{{plan.title}}
-								</view>
+							<text style="color: gray;">
+							{{item.schedule|toString}}
+							</text>
 							</view>
 
 						</view>
 						<!-- 右 -->
 						<view class="left" style="font-size: 26px;" :style="{opacity:multiple?0:1}">
-							<svg class="icon" aria-hidden="true" @click="edit(index)">
+							<svg class="icon" aria-hidden="true" @click="edit(item)">
 								<use href="#icon-bianji"></use>
 							</svg>
 						</view>
@@ -48,13 +47,9 @@
 				
 			</view>
 		</transition>
-			<view style="position: absolute;left: 50%;bottom: 100rpx; transform: translateX(-75px);">
-				<bubbleButton 
-				　:isExpand="isExpand" 
-				:handleClick="tabIndex==0?editSchedule:editPlan" 
-				:text="multiple?'Delete':'New'">
-				</bubbleButton>
-			</view>
+	</checkbox-group>
+	<!-- 按钮 -->
+		
 			<empty v-if="!plan.length&&tabIndex==1" />
 		<transition  name="slide-fade">
 			<view class="content" :style="{left:multiple?'0rpx':left}" v-if="tabIndex==1">
@@ -83,7 +78,7 @@
 						</view>
 						<!-- 右 -->
 						<view class="left" style="font-size: 26px;" :style="{opacity:multiple?0:1}">
-							<svg class="icon"  style="color: #aa0000;"  aria-hidden="true" @click="deletePlan(index)">
+							<svg class="icon"  style="color: #aa0000;"  aria-hidden="true" @click="editPlan(index)">
 								<use href="#icon-shanchudefuben"></use>
 							</svg>
 						</view>
@@ -94,7 +89,13 @@
 				
 			</view>
 		</transition>
-	
+	<view style="position: absolute;left: 50%;bottom: 100rpx; transform: translateX(-75px);">
+		<bubbleButton 
+		　:isExpand="isExpand" 
+		:handleClick="deleteSchedule" 
+		:text="multiple?'Delete':'New'">
+		</bubbleButton>
+	</view>
 	</view>
 </template>
 
@@ -111,40 +112,70 @@
 				check: [],
 				isExpand: false,
 				tabIndex: 0,
-				plan:[]
+				plan:[],
+				map:null
 			}
 		},
 		filters: {
 			time(item) {
 
 				return d(item).Format('yyyy.M.d')
+			},
+			toString(array){
+				return array.map(item=>item.title).join('   ')
 			}
 		},
 		components: {
 			bubbleButton,
 			empty
 		},
+		
 		methods: {
-			
-			editSchedule() {
+			modelMultiple(){
+				this.multiple=!this.multiple
+				this.map=null
+				
+			},
+			deleteSchedule() {
+				console.log(1)
+				//正常模式跳转为新建
 				if(!this.multiple){
-					uni.navigateTo({
-						url:'../setSchedule/index'
-					})
+					if(!this.tabIndex){
+						uni.navigateTo({
+							url:'../setSchedule/index'
+						})
+					}
+					else{
+						uni.navigateTo({
+							url:'../plan/index'
+						})
+					}
+					
 					return
 				}
-				
-				this.check.sort()
+
 				this.isExpand = true
 				this.multiple = false
-				let ar=this.tabIndex?this.plan:this.schedule
-				
-				for (var i = this.check.length - 1; i >= 0; i--) {
-					ar.splice(this.check[i], 1)
+				//对日程还是计划操作
+				let key,result
+				if(!this.tabIndex){
+					for(key in this.map){
+						if(this.map[key])
+							delete this.schedule[key]
+					}
+					result=this.schedule
 				}
+				else{
+					for (var i = this.map.length - 1; i >= 0; i--) {
+						if(this.map[i]) this.plan.splice(this.check[i], 1)
+					
+				}
+				result=this.plan
+				}
+				
 				uni.setStorage({
 					key: this.tabIndex?'plan':'schedule',
-					data: ar
+					data: result
 				})
 				setTimeout(() => {
 					this.isExpand = false
@@ -152,7 +183,7 @@
 
 			
 			},
-			edit(index) {
+			edit(item) {
 
 				uni.navigateTo({
 					url: '../setSchedule/index',
@@ -160,20 +191,14 @@
 						// 通过eventChannel向被打开页面传送数据
 
 						res.eventChannel.emit('acceptDataFromOpenerPage', {
-							data: this.schedule,
-							index
+							key:item.date
 						})
 					},
 				})
 			},
 			editPlan(index){
 				
-				if(!this.multiple){
-					uni.navigateTo({
-						url:'../plan/index'
-					})
-					return
-				}
+			
 				this.plan.splice(index,1)
 				uni.setStorage({
 					key: 'plan',
@@ -181,9 +206,19 @@
 				})
 			},
 			change(e) {
-				this.check.push(e.detail.value[0])
-				// this.check[index]=e.detail.value
-				// console.log(this.check)
+				if(!this.tabIndex){
+					this.map={}
+				}
+				else if(this.tabIndex){
+					this.map=[]
+				}
+				e.detail.value[0]
+				e.detail.value.forEach((item)=>{
+					this.map[item]=true
+				})
+				
+				
+				 console.log(this.map)
 			}
 		
 		},
@@ -278,7 +313,7 @@
 				display: flex;
 
 				.cell {
-					width: 100rpx;
+					
 				}
 			}
 
