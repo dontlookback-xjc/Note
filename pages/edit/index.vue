@@ -7,7 +7,7 @@
 		<view  class="tab" :class="{'stab':tabIndex==0}" @click="multiple?'':tabIndex=1">Plan</view>
 		</view>
 		
-		<empty v-if="schedule&&tabIndex==0" />
+		<empty v-if="!Object.keys(schedule)&&tabIndex==0" />
 <checkbox-group @change="change">
 		<transition name="slide-fade">
 			<view  v-if="tabIndex===0" class="content" :style="{left:multiple?'0rpx':left,height:bus.viewHeight}" >
@@ -230,6 +230,10 @@
 					
 				}
 			})
+			this.bus.$on('schedule',(schedule)=>{
+				this.schedule=schedule
+			})
+			
 			uni.getStorage({
 				key: 'plan',
 				success: (res) => {
