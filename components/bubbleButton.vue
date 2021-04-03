@@ -11,6 +11,9 @@
 
 <script>
 	export default {
+		data(){
+		
+		},
 		props:[
 			'handleClick',
 			'isExpand',

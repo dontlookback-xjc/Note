@@ -114,6 +114,7 @@
 							key: 'schedule',
 							data: schedule,
 							success: () => {
+								this.bus.schedule=schedule
 								uni.navigateTo({
 									url: '../index/index',
 

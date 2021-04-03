@@ -1,6 +1,6 @@
 <template>
 	<view style="height:100%">
-		<my-menu :title="title"></my-menu>
+		<my-menu :title="title" ></my-menu>
 		<my-mask :maskShow="maskShow" @maskClick="maskClick">
 			<slot></slot>
 		</my-mask>

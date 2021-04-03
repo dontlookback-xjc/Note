@@ -7,11 +7,11 @@
 		<view  class="tab" :class="{'stab':tabIndex==0}" @click="multiple?'':tabIndex=1">Plan</view>
 		</view>
 		
-		<empty v-if="!typeof schedule=='object'&&tabIndex==0" />
+		<empty v-if="schedule&&tabIndex==0" />
 <checkbox-group @change="change">
 		<transition name="slide-fade">
 			<view  v-if="tabIndex===0" class="content" :style="{left:multiple?'0rpx':left,height:bus.viewHeight}" >
-				<view v-if="typeof schedule=='object'" v-for="(item,index) in schedule" :key="item.addTime">
+				<view v-if="schedule" v-for="(item,index) in schedule" :key="item.addTime">
 					<!-- 行 -->
 					<label class="schedule">
 						<!-- 左 -->
@@ -106,13 +106,13 @@
 	export default {
 		data() {
 			return {
-				schedule: [],
+				schedule: null,
 				multiple: false,
 				left: '-150rpx',
 				check: [],
 				isExpand: false,
 				tabIndex: 0,
-				plan:[],
+				plan:null,
 				map:null
 			}
 		},
@@ -137,7 +137,7 @@
 				
 			},
 			deleteSchedule() {
-				console.log(1)
+			
 				//正常模式跳转为新建
 				if(!this.multiple){
 					if(!this.tabIndex){
@@ -218,7 +218,7 @@
 				})
 				
 				
-				 console.log(this.map)
+			
 			}
 		
 		},
@@ -227,14 +227,14 @@
 				key: 'schedule',
 				success: (res) => {
 					this.schedule = res.data
-					console.log('this.schedule', this.schedule)
+					
 				}
 			})
 			uni.getStorage({
 				key: 'plan',
 				success: (res) => {
 					this.plan = res.data
-					console.log('this.plan', this.plan)
+				
 				}
 			})
 
@@ -244,7 +244,7 @@
 			if(this.bus.viewHeight) return 
 			uni.getSystemInfo({
 							success:(res)=>{
-								console.log(JSON.stringify(res))
+							
 								// this.viewHeight=res.windowHeight-44+'px'
 								this.bus.viewHeight=res.windowHeight
 								this.viewHeight=this.bus.viewHeight-63-44+'px'

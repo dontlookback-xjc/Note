@@ -46,7 +46,7 @@ import d from "../../js/Date.js"
 					if(item.input!='date')  result.push(this.formClass(item)) 
 					else this.hasDate=true
 				})
-				console.log(result)
+				
 				return result
 			}
 			
@@ -74,7 +74,7 @@ import d from "../../js/Date.js"
 		mounted() {
 			this.now=d().Format('YYYY-MM-DD')
 			
-			console.log(this.now)
+			
 		}
 	}
 </script>

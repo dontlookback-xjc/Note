@@ -31,7 +31,6 @@
 					'运动': 'duanlian',
 					'生活': 'icon'
 				},
-				openerData: null,
 
 				now: 0
 			};
@@ -52,20 +51,11 @@
 
 			}
 		},
-		beforeMount() {
-			this.openerData = this.schedule;
-		},
-
-		mounted() {
-			if (!this.openerData) {
-				this.bus.toIndex();
-				return
-			}
-		},
+	
 		computed: {
 			array() {
-				if(!this.openerData) return
-				let result = this.openerData.schedule
+				if(!this.schedule) return
+				let result = this.schedule.schedule
 				result = result.sort((item, item2) => {
 					return item.markTime - item2.markTime
 				})
@@ -106,7 +96,7 @@
 
 					}
 					sort(0, end, array, parseFloat(this.now))
-					console.log(result)
+					
 					return result
 
 				}
@@ -115,13 +105,14 @@
 		watch: {
 			activeIndex() {
 				let plan = this.array[this.activeIndex]
-				uni.vibrate({
-					success: function() {
+				if(!plan) return
+			
+					
 						uni.showToast({
 							title: plan.title + ' : ' + plan.detail
 						})
-					}
-				});
+					
+				
 			}
 		},
 		created() {

@@ -308,7 +308,7 @@
 			changeTime(e, index) {
 				let item=this.plan[index]
 				t = timToY(this.startTime, this.endTime, this.clockHeight)
-				console.log(this.plan,index)
+				
 				let time=e.detail.value
 			
 				if(time>this.endTime) time=this.endTime+":00"

@@ -14,15 +14,20 @@
 					</view>
 				</component>
 			</transition>
+			<view class="transition" 
+			v-for="(value,index) in temp?temp:list " 
+			:key="index" :class="{'show':hiding?index>showIndex:index<showIndex}">
 
-			<component :is="componentName" class="transition" :class="{'show':hiding?index>showIndex:index<showIndex}"
-				v-for="(value,index) in temp?temp:list " :key="index">
-				<!-- /获得子列表 -->
-				<view @click="delayClick(showMessage,value);">
-					<!-- {{level?value:index}} -->
-					{{level+Boolean(temp)==1?value.name:value}}
-				</view>
-			</component>
+
+				<component :is="componentName" 
+					>
+					<!-- /获得子列表 -->
+					<view @click="delayClick(showMessage,value);">
+						<!-- {{level?value:index}} -->
+						{{level+Boolean(temp)==1?value.name:value}}
+					</view>
+				</component>
+			</view>
 			<!-- #endif -->
 
 		</view>
@@ -41,11 +46,11 @@
 				hiding: 0,
 				ListLeft: '-260rpx',
 				showTopics: false,
-				schedule: [],
 				keyName: '',
 				level: 0,
 				temp: null,
-				unsorted:[]
+				unsorted: [],
+				schedule:[]
 
 			}
 		},
@@ -53,7 +58,7 @@
 			componentName: {
 				type: String,
 				default: 'box'
-			},
+			}
 
 
 		},
@@ -63,9 +68,10 @@
 				//二级
 				if (this.level) {
 					if (this.keyName) return this.sorted[this.keyName]
-					else{
+					else {
 						return this.unsorted
-					} return  
+					}
+					return
 				}
 				//一级
 				else {
@@ -80,20 +86,20 @@
 
 
 			},
-		
+
 			sorted() {
 				let set = {};
 				//无分类数据
 				let key
-				for(key in this.schedule){
-					let item=this.schedule[key]
+				for (key in this.schedule) {
+					let item = this.schedule[key]
 					this.unsorted.push(item)
 					if (!set[item.type]) {
 						set[item.type] = []
 					}
 					set[item.type].push(item)
 				}
-			
+
 				return set
 			},
 
@@ -116,16 +122,17 @@
 				let flag
 				if (true) {
 					interval = setInterval(() => {
-						
+
 						this.showIndex += 1;
-					
+
 						if (!add) {
 							let sub
-						
-							if(this.temp){sub=this.temp.length}
-							else sub=this.list.length
-						
-							
+
+							if (this.temp) {
+								sub = this.temp.length
+							} else sub = this.list.length
+
+
 							flag = this.showIndex % sub;
 						} else {
 							flag = this.showIndex % this.list.length
@@ -166,7 +173,7 @@
 							// 通过eventChannel向被打开页面传送数据
 
 							res.eventChannel.emit('acceptDataFromOpenerPage', {
-								key:item.date
+								key: item.date
 							})
 						},
 					})
@@ -182,34 +189,38 @@
 		components: {
 			box
 		},
-		mounted() {
-			uni.getStorage({
-				key: 'schedule',
-				success: (res) => {
-					this.schedule = res.data
-				}
+		created(){
+			this.schedule=uni.getStorageSync('schedule')
+			this.bus.$on('schedule', (schedule) => {
+				this.schedule=schedule
 			})
+		}
+		,
+		mounted() {
+			
+		
 			var dom = document.getElementsByClassName('transition')
-
-
+		
 			//点击菜单
 			this.bus.$on('showTopics', () => {
+		
 				if (!delayTime) {
 
-					// #ifndef MP-WEIXIN
+					
+					//无初始数据 无标签获取数据
+					if(dom.length){
+						var time = getComputedStyle(dom[0], null)['transition-duration']
+						delayTime = time.slice(0, -1) * 1000
+					}
+					else{
+							delayTime = 700
+					}
+					
 
-					var time = getComputedStyle(dom[0], null)['transition-duration']
-					delayTime = time.slice(0, -1) * 1000
-
-					// #endif
-
-					// #ifdef MP-WEIXIN
-
-					delayTime = 700
-					// #endif
+		
 				}
 				this.showTopics = !this.showTopics;
-			
+
 				if (this.showTopics) setTimeout(this.showSwitch, 50)
 				else this.showSwitch(false)
 			})

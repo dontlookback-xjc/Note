@@ -12,7 +12,7 @@ function compute(start,end,height){
 			let num = pNum - start
 			num >= 0 ? y = height * num * 2 : y = 0
 		}
-		console.log(y)
+		
 			return y
 			
 	}

@@ -6,11 +6,13 @@ Vue.config.productionTip = false
 App.mpType = 'app'
 Vue.prototype.bus = new Vue({
 	data: {
-
+		schedule:[],
 		viewHeight: 0
 	},
 	watch: {
-
+		schedule(){
+			this.$emit('schedule',this.schedule)
+		}
 
 	},
 	methods: {
@@ -30,7 +32,7 @@ Vue.prototype.bus = new Vue({
 		 getViewHeight(){
 			let res=uni.getSystemInfoSync()
 			this.viewHeight=res.windowHeight;
-			console.log(this.viewHeight)
+			
 			return res.windowHeight
 		
 		}
@@ -40,7 +42,7 @@ Vue.prototype.bus = new Vue({
 	},
 	created() {
 		let stroaged = uni.getStorageSync('plan')
-		console.log(stroaged)
+		
 		if (!stroaged || stroaged.length) {
 			uni.setStorage({
 				key: 'plan',

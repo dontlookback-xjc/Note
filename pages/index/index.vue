@@ -1,7 +1,7 @@
 <template>
-	<view style="overflow-y: scroll;">
-		<myMask :title="title">
-			<view class="content" :style="{height:this.viewHeight}">
+	<view style="overflow-y: scroll;width: 750rpx;">
+		<myMask :title="title" >
+			<view class="content" :style="{height:viewHeight}">
 				<view class="top">
 					<text v-if="todaySchedule">
 						今天有{{todaySchedule.schedule.length}}项计划</text>
@@ -55,7 +55,7 @@
 		},
 		computed: {
 			todaySchedule() {
-				let result = this.schedule[this.date[5]]
+				let result = this.schedule[this.date[this.w]]
 				if (result) return result
 
 
@@ -70,8 +70,7 @@
 
 		},
 		created() {
-			this.schedule = uni.getStorageSync('schedule')
-			console.log(this.schedule)
+		
 			this.viewHeight = this.bus.getViewHeight();
 			this.viewHeight = this.bus.viewHeight - 44 + "px"
 			var date = new Date();
@@ -120,9 +119,8 @@
 			}
 
 			// this.date.forEach((item,index)=>{if(this.schedule[item]) return index)})
-		},
-		mounted() {
-
+		},onShow() {
+				this.schedule = uni.getStorageSync('schedule')
 		}
 	}
 </script>

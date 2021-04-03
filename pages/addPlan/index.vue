@@ -44,7 +44,7 @@
 					}
 							
 				})
-				console.log(result)
+			
 			if(result){
 			
 			var formData=form.reduce(
