@@ -199,19 +199,23 @@
 		mounted() {
 			
 		
-			var dom = document.getElementsByClassName('transition')
+			
 		
 			//点击菜单
 			this.bus.$on('showTopics', () => {
 		
 				if (!delayTime) {
-
-					
-					//无初始数据 无标签获取数据
-					if(dom.length){
+				if(document){
+					var dom = document.getElementsByClassName('transition')
 						var time = getComputedStyle(dom[0], null)['transition-duration']
 						delayTime = time.slice(0, -1) * 1000
-					}
+				
+				}
+					
+					//无初始数据 无标签获取数据
+					
+				
+				
 					else{
 							delayTime = 700
 					}
