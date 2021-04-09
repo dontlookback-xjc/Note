@@ -120,7 +120,7 @@
 
 			// this.date.forEach((item,index)=>{if(this.schedule[item]) return index)})
 		},onShow() {
-			console.log(1)
+			
 				this.schedule = uni.getStorageSync('schedule')
 		}
 	}

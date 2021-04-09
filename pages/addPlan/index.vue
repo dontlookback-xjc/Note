@@ -61,7 +61,8 @@
 				let pages=getCurrentPages();
 				if(pages.length>1){
 					let lastPage=pages.length>1?pages[pages.length-2]:''
-					lastPage.plan.push(formData)
+					lastPage.plan.push(Object.assign(formData,{markTime:null,y:0,oldY:0,x:0}) )
+					
 					uni.navigateBack()
 				}
 				else{

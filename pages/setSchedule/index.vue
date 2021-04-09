@@ -239,6 +239,7 @@
 				this.planIndex = index
 
 				this.plan[index].oldY = this.plan[index].y
+				
 			},
 			touchend() {
 
@@ -251,15 +252,15 @@
 
 								this.plan.splice(this.planIndex, 1)
 								this.planIndex = null
-								// console.log('用户点击确定');
+						
 							} else if (res.cancel) {
-								// console.log('用户点击取消');
+								
 							}
 						}
 					});
 				}
 				if (item.oldY !== null) {
-
+					console.log(item)
 					let num = Math.round(item.oldY / (this.clockHeight))
 
 					num > this.clock.length * 2 - 2 ? num = this.clock.length * 2 - 2 : ''
@@ -274,9 +275,10 @@
 					//邻近移动
 					setTimeout(() => {
 						item.y = roundY
-
+				
+						
 					}, 10)
-
+					
 					//标记时间
 					item.markTime = num % 2 ? this.clock[num / 2 - 0.5] + '.30' : this.clock[num / 2] +
 						'.00'
@@ -286,7 +288,7 @@
 			},
 			existingPlanPush() {
 				this.StoragedPlan.forEach((item, index) => {
-
+					
 					if (item.checked) {
 						Object.assign(item, {
 							markTime: null
@@ -313,6 +315,7 @@
 			
 				if(time>this.endTime) time=this.endTime+":00"
 				if(time<this.startTime) time=this.startTime+":00"
+			
 				item.markTime=time
 				item.y=t(item)
 

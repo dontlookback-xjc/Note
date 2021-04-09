@@ -67,9 +67,14 @@
 					
 					uni.setStorage({
 						key: 'plan',
-						data: this.plan
+						data: this.plan,
+						success: () => {
+							uni.navigateBack({
+								
+							})
+						}
 					});
-					this.bus.plan = uni.getStorageSync('plan');
+					
 				}
 			}
 

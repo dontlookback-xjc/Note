@@ -43,7 +43,7 @@ Vue.prototype.bus = new Vue({
 	created() {
 		let stroaged = uni.getStorageSync('plan')
 		
-		if (!stroaged || stroaged.length) {
+		if (!stroaged || !stroaged.length) {
 			uni.setStorage({
 				key: 'plan',
 				data: [

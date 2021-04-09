@@ -64,7 +64,7 @@
 						(total, item) => {
 							let obj = {};
 							if (item.input == 'date') {
-								obj[item.input] = item.text.replace(/-0/g, '.')
+								obj[item.input] = item.text.replace(/-0|-/g, '.')
 							} else
 								obj[item.input] = item.text
 							return Object.assign(total, obj)

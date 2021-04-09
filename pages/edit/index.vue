@@ -13,7 +13,7 @@
 			<transition name="slide-fade">
 				<view v-if="tabIndex===0" class="content" :style="{left:multiple?'0rpx':left,height:bus.viewHeight}">
 					<view v-if="schedule" v-for="(item,index) in schedule" :key="item.addTime">
-						行
+						
 						<label class="schedule">
 							<!-- 左 -->
 
@@ -24,7 +24,7 @@
 								<view style="display: flex;justify-content: space-between;align-items: center;">
 									<view>日程: <text style="color: gray;">{{" "+item.name}}</text></view>
 									<view style="font-size: 16px;">
-										{{item.addTime|time }}
+										创建日期 {{item.addTime|time }}
 									</view>
 								</view>
 
@@ -63,7 +63,7 @@
 							<checkbox class="left" :value="index.toString()" :style="{opacity:multiple?1:0}" />
 						</checkbox-group>
 						<!-- 中 -->
-						<view style="height: 100rpx;width: 500rpx;padding:0 50rpx;">
+						<view style="width: 500rpx;padding:0 50rpx;">
 							<view style="display: flex;justify-content: space-between;align-items: center;">
 								<view>事项: <text style="color: gray;">{{" "+item.title}}</text></view>
 								<view style="font-size: 16px;">
@@ -71,8 +71,10 @@
 								</view>
 							</view>
 
-							<view class="plan">计划：
-								<view style="color: gray;">
+							<view class="plan">
+								<text style="width: 100rpx;white-space: nowrap;">计划:</text>
+
+								<view style="color: gray;flex:1">
 									{{item.detail}}
 								</view>
 							</view>
@@ -117,7 +119,7 @@
 		},
 		filters: {
 			time(item) {
-
+				
 				return d(item).Format('yyyy.M.d')
 			},
 			toString(array) {
@@ -219,6 +221,17 @@
 
 		},
 		created() {
+
+			this.bus.$on('schedule', (schedule) => {
+				this.schedule = schedule
+			})
+
+
+
+		},
+		onShow() {
+			
+
 			uni.getStorage({
 				key: 'schedule',
 				success: (res) => {
@@ -226,24 +239,17 @@
 
 				}
 			})
-			this.bus.$on('schedule', (schedule) => {
-				this.schedule = schedule
-			})
-
 			uni.getStorage({
 				key: 'plan',
 				success: (res) => {
 					this.plan = res.data
-
+					
 				}
 			})
-
-		},
-		onShow() {
 			if (this.bus.viewHeight) return
+
 			uni.getSystemInfo({
 				success: (res) => {
-
 					// this.viewHeight=res.windowHeight-44+'px'
 					this.bus.viewHeight = res.windowHeight
 					this.viewHeight = this.bus.viewHeight - 63 - 44 + 'px'
@@ -330,7 +336,8 @@
 			.plan {
 				display: flex;
 
-				.cell {}
+
+
 			}
 
 		}
