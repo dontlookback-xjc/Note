@@ -4,16 +4,8 @@
 			backgroundColor="rgba( 173,215,237)" shadow="true" color="white"></uni-nav-bar>
 		<view>
 
-
-
 			<myForm :formClass="formClass" :handleSubmit="checkForm" :formAttribute="formAttribute"></myForm>
-
-
-
-
 		</view>
-
-
 	</view>
 
 </template>
@@ -78,7 +70,7 @@
 						}
 						Object.assign(obj, formData)
 
-						await new Promise((resolve) => setTimeout(resolve, 300))
+						// await new Promise((resolve) => setTimeout(resolve, 300))
 						var schedule = uni.getStorageSync('schedule')
 						if (typeof schedule !== 'object') schedule = {};
 						if (schedule[obj.date]) {
@@ -97,16 +89,12 @@
 													url: '../index/index',
 
 												})
-
 											}
 										});
-
 									}
-							
-									
+
 								}
 							});
-
 						}
 						else{
 							schedule[obj.date] = obj
@@ -117,16 +105,10 @@
 								this.bus.schedule=schedule
 								uni.navigateTo({
 									url: '../index/index',
-
 								})
-
 							}
 						});
 						}
-
-						
-
-
 					} else {
 						uni.showToast({
 							title: '请重新进入'

@@ -14,13 +14,11 @@
 					</view>
 				</component>
 			</transition>
-			<view class="transition" 
-			v-for="(value,index) in temp?temp:list " 
-			:key="index" :class="{'show':hiding?index>showIndex:index<showIndex}">
+			<view class="transition" v-for="(value,index) in temp?temp:list " :key="index"
+				:class="{'show':hiding?index>showIndex:index<showIndex}">
 
 
-				<component :is="componentName" 
-					>
+				<component :is="componentName">
 					<!-- /获得子列表 -->
 					<view @click="delayClick(showMessage,value);">
 						<!-- {{level?value:index}} -->
@@ -41,7 +39,6 @@
 	export default {
 		data() {
 			return {
-
 				showIndex: 0,
 				hiding: 0,
 				ListLeft: '-260rpx',
@@ -50,7 +47,7 @@
 				level: 0,
 				temp: null,
 				unsorted: [],
-				schedule:[]
+				schedule: []
 
 			}
 		},
@@ -59,8 +56,6 @@
 				type: String,
 				default: 'box'
 			}
-
-
 		},
 		computed: {
 
@@ -80,11 +75,7 @@
 			},
 			duration() {
 				let ar = this.temp ? this.temp : this.list
-
 				return Math.ceil(2 / ar.length) * 150
-
-
-
 			},
 
 			sorted() {
@@ -93,7 +84,7 @@
 				let key
 				for (key in this.schedule) {
 					let item = this.schedule[key]
-					this.unsorted.push(item)
+				
 					if (!set[item.type]) {
 						set[item.type] = []
 					}
@@ -102,10 +93,10 @@
 
 				return set
 			},
-
 		},
 		methods: {
 			all() {
+				this.keyName = ''
 				if (this.level) {
 					this.level = 0;
 				} else {
@@ -122,17 +113,12 @@
 				let flag
 				if (true) {
 					interval = setInterval(() => {
-
 						this.showIndex += 1;
-
 						if (!add) {
 							let sub
-
 							if (this.temp) {
 								sub = this.temp.length
 							} else sub = this.list.length
-
-
 							flag = this.showIndex % sub;
 						} else {
 							flag = this.showIndex % this.list.length
@@ -144,15 +130,12 @@
 						}
 					}, this.duration)
 				}
-
 			},
 			delayClick(cb) {
 				var params = Array.prototype.slice.call(arguments, 1)
 
 				this.temp = JSON.parse(JSON.stringify(this.list))
 				cb(...params)
-
-
 				//等返回按钮隐藏
 				setTimeout(() => {
 					this.showSwitch(false);
@@ -160,18 +143,15 @@
 						this.temp = null;
 						this.showSwitch();
 					}, delayTime)
-
 				}, this.duration)
 
 			},
 			showMessage(item) {
 				if (this.level) {
-
 					uni.navigateTo({
 						url: '../../pages/setSchedule/index',
 						success: (res) => {
 							// 通过eventChannel向被打开页面传送数据
-
 							res.eventChannel.emit('acceptDataFromOpenerPage', {
 								key: item.date
 							})
@@ -189,48 +169,38 @@
 		components: {
 			box
 		},
-		created(){
-			this.schedule=uni.getStorageSync('schedule')
-			this.bus.$on('schedule', (schedule) => {
-				this.schedule=schedule
+		created() {
+			this.schedule = uni.getStorageSync('schedule')
+			this.unsorted=Object.values(this.schedule)
+			this.bus.$on('schedule', schedule => {
+				this.schedule = schedule
+				this.unsorted=Object.values(schedule)
 			})
-		}
-		,
+		},
 		mounted() {
-			
-		
-			
-		
 			//点击菜单
 			this.bus.$on('showTopics', () => {
-		
+				if(this.unsorted.length===0) {
+					uni.showToast({title: '没有已制定日程'});
+					return;
+				}
 				if (!delayTime) {
-				if(document){
-					var dom = document.getElementsByClassName('transition')
+					if (document) {
+						var dom = document.getElementsByClassName('transition')
 						var time = getComputedStyle(dom[0], null)['transition-duration']
 						delayTime = time.slice(0, -1) * 1000
-				
-				}
-					
-					//无初始数据 无标签获取数据
-					
-				
-				
-					else{
-							delayTime = 700
 					}
-					
-
-		
+					//无初始数据 无标签获取数据
+					else {
+						delayTime = 700
+					}
 				}
 				this.showTopics = !this.showTopics;
 
 				if (this.showTopics) setTimeout(this.showSwitch, 50)
 				else this.showSwitch(false)
 			})
-
 		}
-
 	}
 </script>
 

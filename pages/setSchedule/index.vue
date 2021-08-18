@@ -103,7 +103,7 @@
 </template>
 
 <script>
-	var timeOut;
+	var timeOut=null;
 	var flag = true;
 	var t
 	var schedule, index, ar, update;
@@ -197,7 +197,8 @@
 				this.$forceUpdate()
 			},
 			move(e, index) {
-
+				if(timeOut!==null) return
+				timeOut=setTimeout(()=>timeOut=null,50)
 				this.plan[index].oldY = e.detail.y
 				this.plan[index].x = e.detail.x
 				if (e.detail.x < 0) this.boundCheck = true
@@ -221,7 +222,6 @@
 				)
 			},
 			checkNum(e, params) {
-
 				var value = e.detail.value
 				if (params == 'start') {
 					value < 0 ? this.startTime = 0 : '';
@@ -242,20 +242,16 @@
 				
 			},
 			touchend() {
-
 				var item = this.plan[this.planIndex]
 				if (item.x < 0) {
 					uni.showModal({
 						content: '确定要删除该计划吗',
 						success: (res) => {
 							if (res.confirm) {
-
 								this.plan.splice(this.planIndex, 1)
 								this.planIndex = null
-						
-							} else if (res.cancel) {
-								
-							}
+								this.boundCheck = false
+							} 
 						}
 					});
 				}
@@ -330,10 +326,7 @@
 						return
 					}
 				})
-
-
 				var data = this.plan.map(item => {
-
 					let {
 						detail,
 						markTime,
@@ -347,7 +340,6 @@
 						title
 					}
 				})
-
 				uni.navigateTo({
 					url: '../newSchedule/index',
 					success: (res) => {
@@ -358,14 +350,10 @@
 						})
 					},
 				})
-
-
 			}
 		},
 		onLoad(option) {
-
 			const eventChannel = this.getOpenerEventChannel()
-
 			eventChannel.on('acceptDataFromOpenerPage', (data) => {
 
 				var key = data.key
